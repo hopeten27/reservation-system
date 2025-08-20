@@ -12,6 +12,9 @@ import authRoutes from './routes/authRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import slotRoutes from './routes/slotRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+import invoiceRoutes from './routes/invoiceRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -21,27 +24,10 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// CORS for GitHub Codespaces
+// CORS
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'http://localhost:5174', 
-      'http://localhost:5175'
-    ];
-    
-    if (origin.includes('app.github.dev') || origin.includes('githubpreview.dev') || origin.includes('github.dev') || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
+  origin: true,
+  credentials: true
 }));
 
 // Rate limiting
@@ -83,6 +69,9 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/services', serviceRoutes);
 app.use('/api/v1/slots', slotRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/invoices', invoiceRoutes);
 
 // Protected test routes
 app.get('/api/v1/protected', authGuard, (req, res) => {

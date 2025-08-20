@@ -41,6 +41,7 @@ const LoginPage = () => {
             Or{' '}
             <Link
               to="/register"
+              state={{ from: location.state?.from }}
               className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400"
             >
               create a new account

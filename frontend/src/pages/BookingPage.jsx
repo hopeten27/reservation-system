@@ -1,19 +1,23 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useGetSlotQuery } from '../store/api/slotsApi';
-import { useCreateBookingMutation } from '../store/api/bookingsApi';
+import { useCreatePaymentIntentMutation } from '../store/api/paymentApi';
 import { useForm } from 'react-hook-form';
 import Loader from '../components/shared/Loader';
 import ErrorState from '../components/shared/ErrorState';
-import FormInput from '../components/shared/FormInput';
+import StripeProvider from '../components/payment/StripeProvider';
+import PaymentForm from '../components/payment/PaymentForm';
 
 const BookingPage = () => {
   const { slotId } = useParams();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const [step, setStep] = useState('details');
+  const [paymentData, setPaymentData] = useState(null);
   
   const { data: slotData, isLoading, error } = useGetSlotQuery(slotId);
-  const [createBooking, { isLoading: isCreating }] = useCreateBookingMutation();
+  const [createPaymentIntent, { isLoading: isCreating }] = useCreatePaymentIntentMutation();
   
   const { register, handleSubmit, formState: { errors } } = useForm();
   
@@ -22,20 +26,68 @@ const BookingPage = () => {
   
   const onSubmit = async (data) => {
     try {
-      await createBooking({
-        service: service._id,
-        slot: slotId,
-        notes: data.notes,
+      const response = await createPaymentIntent({
+        serviceId: service._id,
+        slotId,
+        notes: data.notes
       }).unwrap();
-      navigate('/bookings');
+      
+      setPaymentData({
+        clientSecret: response.data.clientSecret,
+        amount: response.data.amount,
+        notes: data.notes
+      });
+      setStep('payment');
     } catch (error) {
       // Error handled by toast middleware
     }
   };
   
+  const handlePaymentSuccess = () => {
+    navigate('/bookings');
+  };
+  
+  const handlePaymentError = (error) => {
+    console.error('Payment error:', error);
+    setStep('details');
+  };
+  
   if (isLoading) return <Loader className="py-12" />;
   if (error) return <ErrorState message="Failed to load slot details" />;
   if (!slot) return <ErrorState message="Slot not found" />;
+
+  if (step === 'payment' && paymentData) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Complete Payment</h1>
+          <div className="mb-6">
+            <h3 className="font-semibold text-gray-900">{service?.name}</h3>
+            <p className="text-gray-600">
+              {new Date(slot.date).toLocaleDateString()} at{' '}
+              {new Date(slot.date).toLocaleTimeString()}
+            </p>
+          </div>
+          
+          <StripeProvider clientSecret={paymentData.clientSecret}>
+            <PaymentForm
+              clientSecret={paymentData.clientSecret}
+              amount={paymentData.amount}
+              onSuccess={handlePaymentSuccess}
+              onError={handlePaymentError}
+            />
+          </StripeProvider>
+          
+          <button
+            onClick={() => setStep('details')}
+            className="mt-4 text-gray-600 hover:text-gray-800"
+          >
+            ← Back to details
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -132,7 +184,7 @@ const BookingPage = () => {
                         Processing...
                       </>
                     ) : (
-                      'Confirm Booking'
+                      'Continue to Payment'
                     )}
                   </button>
                   

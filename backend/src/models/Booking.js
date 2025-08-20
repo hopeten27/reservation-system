@@ -27,7 +27,8 @@ const bookingSchema = new mongoose.Schema({
     min: [0, 'Amount cannot be negative']
   },
   paymentIntentId: {
-    type: String
+    type: String,
+    required: [true, 'Payment intent ID is required']
   },
   notes: {
     type: String,
@@ -46,5 +47,6 @@ bookingSchema.index({ service: 1 });
 bookingSchema.index({ slot: 1 });
 bookingSchema.index({ status: 1 });
 bookingSchema.index({ createdAt: -1 });
+bookingSchema.index({ paymentIntentId: 1 });
 
 export default mongoose.model('Booking', bookingSchema);

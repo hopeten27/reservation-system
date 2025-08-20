@@ -4,10 +4,13 @@ import Loader from '../shared/Loader';
 import ErrorState from '../shared/ErrorState';
 import EmptyState from '../shared/EmptyState';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import ServiceModal from './ServiceModal';
 
 const ServicesTab = () => {
   const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editService, setEditService] = useState(null);
   
   const { data, isLoading, error } = useGetServicesQuery({ page, limit: 10 });
   const [deleteService, { isLoading: isDeleting }] = useDeleteServiceMutation();
@@ -31,7 +34,10 @@ const ServicesTab = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Services</h2>
-        <button className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
+        <button 
+          onClick={() => setShowModal(true)}
+          className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+        >
           Add Service
         </button>
       </div>
@@ -41,7 +47,10 @@ const ServicesTab = () => {
           title="No services found"
           description="Create your first service to get started."
           action={
-            <button className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
+            <button 
+              onClick={() => setShowModal(true)}
+              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+            >
               Add Service
             </button>
           }
@@ -79,7 +88,13 @@ const ServicesTab = () => {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2 ml-4">
-                      <button className="text-primary-600 hover:text-primary-800 dark:text-primary-400 font-medium">
+                      <button 
+                        onClick={() => {
+                          setEditService(service);
+                          setShowModal(true);
+                        }}
+                        className="text-primary-600 hover:text-primary-800 dark:text-primary-400 font-medium"
+                      >
                         Edit
                       </button>
                       <button 
@@ -128,6 +143,15 @@ const ServicesTab = () => {
         message="Are you sure you want to delete this service? This action cannot be undone."
         confirmText="Delete"
         type="danger"
+      />
+      
+      <ServiceModal
+        isOpen={showModal}
+        onClose={() => {
+          setShowModal(false);
+          setEditService(null);
+        }}
+        service={editService}
       />
     </div>
   );

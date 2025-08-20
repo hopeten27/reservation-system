@@ -7,6 +7,11 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
+    "create-admin": "node scripts/createAdmin.js",
+    "create-slots": "node scripts/createSlots.js",
+    "create-sample-data": "node scripts/createSampleData.js",
+    "generate-test-data": "node scripts/generateTestData.js",
+    "test-invoice": "node scripts/testInvoice.js",
     "test": "node --experimental-vm-modules node_modules/.bin/jest"
   },
   "dependencies": {
@@ -17,9 +22,12 @@
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
+    "html-pdf-node": "^1.0.8",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.0",
     "morgan": "^1.10.0",
+    "puppeteer": "^24.16.2",
+    "stripe": "^18.4.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

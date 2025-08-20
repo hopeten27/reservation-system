@@ -3,10 +3,12 @@ import { useGetBookingsQuery } from '../../store/api/bookingsApi';
 import Loader from '../shared/Loader';
 import ErrorState from '../shared/ErrorState';
 import EmptyState from '../shared/EmptyState';
+import BookingDetailsModal from './BookingDetailsModal';
 
 const BookingsTab = () => {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({ status: '' });
+  const [selectedBooking, setSelectedBooking] = useState(null);
   
   const { data, isLoading, error } = useGetBookingsQuery({ 
     page, 
@@ -83,7 +85,10 @@ const BookingsTab = () => {
                       )}
                     </div>
                     <div className="flex items-center space-x-2 ml-4">
-                      <button className="text-primary-600 hover:text-primary-800 dark:text-primary-400 font-medium">
+                      <button 
+                        onClick={() => setSelectedBooking(booking)}
+                        className="text-primary-600 hover:text-primary-800 dark:text-primary-400 font-medium"
+                      >
                         View
                       </button>
                     </div>
@@ -117,6 +122,12 @@ const BookingsTab = () => {
           )}
         </>
       )}
+      
+      <BookingDetailsModal
+        isOpen={!!selectedBooking}
+        onClose={() => setSelectedBooking(null)}
+        booking={selectedBooking}
+      />
     </div>
   );
 };
