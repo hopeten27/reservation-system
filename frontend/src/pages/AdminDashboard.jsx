@@ -1,13 +1,36 @@
+import { useState } from 'react';
+import AdminTabs from '../components/admin/AdminTabs';
+import ServicesTab from '../components/admin/ServicesTab';
+import BookingsTab from '../components/admin/BookingsTab';
+
 const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState('services');
+  
+  const tabs = [
+    { id: 'services', label: 'Services' },
+    { id: 'slots', label: 'Slots' },
+    { id: 'bookings', label: 'Bookings' },
+  ];
+  
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'services':
+        return <ServicesTab />;
+      case 'slots':
+        return <div className="py-8 text-center text-gray-500">Slots management coming soon...</div>;
+      case 'bookings':
+        return <BookingsTab />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Admin Dashboard
         </h1>
-        <button className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
-          Add Service
-        </button>
       </div>
 
       {/* Stats Cards */}
@@ -69,69 +92,16 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Management Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Services Management */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Services</h2>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">Yoga Class</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">$50 • 60 min</p>
-                </div>
-                <div className="flex space-x-2">
-                  <button className="text-primary-600 hover:text-primary-800 dark:text-primary-400">Edit</button>
-                  <button className="text-red-600 hover:text-red-800 dark:text-red-400">Delete</button>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">Massage Therapy</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">$100 • 90 min</p>
-                </div>
-                <div className="flex space-x-2">
-                  <button className="text-primary-600 hover:text-primary-800 dark:text-primary-400">Edit</button>
-                  <button className="text-red-600 hover:text-red-800 dark:text-red-400">Delete</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Bookings */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Bookings</h2>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">John Doe</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Yoga Class • Dec 25, 10:00 AM</p>
-                </div>
-                <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 rounded-full">
-                  Confirmed
-                </span>
-              </div>
-              
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div>
-                  <h3 className="font-medium text-gray-900 dark:text-white">Jane Smith</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Massage • Dec 24, 2:00 PM</p>
-                </div>
-                <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 rounded-full">
-                  Pending
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Tabs */}
+      <AdminTabs 
+        tabs={tabs} 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+      />
+      
+      {/* Tab Content */}
+      <div className="mt-6">
+        {renderTabContent()}
       </div>
     </div>
   );

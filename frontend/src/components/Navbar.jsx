@@ -1,12 +1,23 @@
 import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { useDarkMode } from '../hooks/useDarkMode';
+import { useLogoutMutation } from '../store/api/authApi';
+import { clearAuth } from '../store/slices/authSlice';
 
 const Navbar = () => {
   const { isDark, toggleDarkMode } = useDarkMode();
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const [logout] = useLogoutMutation();
+  const dispatch = useDispatch();
   
-  // Mock auth state - will be replaced with Redux
-  const isAuthenticated = false;
-  const user = null;
+  const handleLogout = async () => {
+    try {
+      await logout().unwrap();
+      dispatch(clearAuth());
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   return (
     <nav className="bg-white dark:bg-gray-800 shadow-lg">
@@ -40,7 +51,10 @@ const Navbar = () => {
                       Dashboard
                     </Link>
                   )}
-                  <button className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium">
+                  <button 
+                    onClick={handleLogout}
+                    className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium"
+                  >
                     Logout
                   </button>
                 </>

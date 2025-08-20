@@ -1,3 +1,5 @@
+import ServiceList from '../components/ServiceList';
+
 const HomePage = () => {
   return (
     <div className="space-y-12">
@@ -11,14 +13,14 @@ const HomePage = () => {
           Discover and book amazing services with ease. From wellness sessions to professional consultations, 
           find exactly what you need.
         </p>
-        <div className="space-x-4">
-          <button className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
-            Browse Services
-          </button>
-          <button className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 px-8 py-3 rounded-lg font-semibold transition-colors">
-            Learn More
-          </button>
-        </div>
+      </section>
+
+      {/* Services Section */}
+      <section>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+          Available Services
+        </h2>
+        <ServiceList />
       </section>
 
       {/* Features Section */}

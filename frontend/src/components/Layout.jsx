@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import Toast from './Toast';
 
 const Layout = () => {
   return (
@@ -15,10 +16,8 @@ const Layout = () => {
       
       <Footer />
       
-      {/* Toast Container - will be implemented later */}
-      <div id="toast-container" className="fixed top-4 right-4 z-50 space-y-2">
-        {/* Toasts will be rendered here */}
-      </div>
+      {/* Toast notifications */}
+      <Toast />
     </div>
   );
 };

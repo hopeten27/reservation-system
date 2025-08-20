@@ -21,10 +21,27 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// CORS
+// CORS for GitHub Codespaces
 app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://localhost:5174', 
+      'http://localhost:5175'
+    ];
+    
+    if (origin.includes('app.github.dev') || origin.includes('githubpreview.dev') || origin.includes('github.dev') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
 
 // Rate limiting
