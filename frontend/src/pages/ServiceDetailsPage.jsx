@@ -31,12 +31,22 @@ const ServiceDetailsPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
       {/* Service Header */}
-      <div className="bg-white rounded-lg shadow-sm p-8">
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{service.name}</h1>
-            <p className="text-gray-600 text-lg">{service.description}</p>
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        {service.image?.url && (
+          <div className="h-64 overflow-hidden">
+            <img
+              src={service.image.url}
+              alt={service.name}
+              className="w-full h-full object-cover"
+            />
           </div>
+        )}
+        <div className="p-8">
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{service.name}</h1>
+              <p className="text-gray-600 text-lg">{service.description}</p>
+            </div>
           <div className="text-right">
             <div className="text-3xl font-bold text-primary-600">
               ${appliedDiscount 
@@ -49,16 +59,17 @@ const ServiceDetailsPage = () => {
             </div>
             <div className="text-gray-500">{service.durationMinutes} minutes</div>
           </div>
-        </div>
-        
-        <div className="flex items-center space-x-4">
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-            service.isActive 
-              ? 'bg-green-100 text-green-800'
-              : 'bg-gray-100 text-gray-800'
-          }`}>
-            {service.isActive ? 'Available' : 'Unavailable'}
-          </span>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+              service.isActive 
+                ? 'bg-green-100 text-green-800'
+                : 'bg-gray-100 text-gray-800'
+            }`}>
+              {service.isActive ? 'Available' : 'Unavailable'}
+            </span>
+          </div>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGetCouponsQuery, useCreateCouponMutation } from '../../store/api/adminApi';
+import { useGetCouponsQuery, useCreateCouponMutation, useDeleteCouponMutation } from '../../store/api/adminApi';
 import Loader from '../shared/Loader';
 
 const CouponManagement = () => {
@@ -17,7 +17,18 @@ const CouponManagement = () => {
 
   const { data, isLoading } = useGetCouponsQuery();
   const [createCoupon, { isLoading: isCreating }] = useCreateCouponMutation();
+  const [deleteCoupon] = useDeleteCouponMutation();
   const coupons = data?.data?.coupons || [];
+  
+  const handleDelete = async (couponId) => {
+    if (window.confirm('Are you sure you want to delete this coupon?')) {
+      try {
+        await deleteCoupon(couponId).unwrap();
+      } catch (error) {
+        // Error handled by toast
+      }
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -189,6 +200,7 @@ const CouponManagement = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usage</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valid Until</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -217,6 +229,14 @@ const CouponManagement = () => {
                   }`}>
                     {coupon.isActive && new Date(coupon.validUntil) > new Date() ? 'Active' : 'Inactive'}
                   </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    onClick={() => handleDelete(coupon._id)}
+                    className="text-red-600 hover:text-red-800 text-sm font-medium"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

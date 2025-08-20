@@ -14,6 +14,13 @@ export const adminApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Coupon'],
     }),
+    deleteCoupon: builder.mutation({
+      query: (id) => ({
+        url: `/coupons/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Coupon'],
+    }),
     bulkCreateSlots: builder.mutation({
       query: (slotData) => ({
         url: '/admin/bulk-slots',
@@ -63,6 +70,7 @@ export const adminApi = baseApi.injectEndpoints({
 export const {
   useGetCouponsQuery,
   useCreateCouponMutation,
+  useDeleteCouponMutation,
   useBulkCreateSlotsMutation,
   useExportDataMutation,
   useGetAnalyticsQuery,

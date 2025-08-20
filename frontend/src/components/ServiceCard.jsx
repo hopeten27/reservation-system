@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 const ServiceCard = ({ service }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-      {service.imageUrl && (
+      {service.image?.url && (
         <img
-          src={service.imageUrl}
+          src={service.image.url}
           alt={service.name}
           className="w-full h-48 object-cover"
         />

@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 import { useCreateServiceMutation, useUpdateServiceMutation } from '../../store/api/servicesApi';
 import FormInput from '../shared/FormInput';
 import Loader from '../shared/Loader';
@@ -8,8 +9,8 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
   const [createService, { isLoading: isCreating }] = useCreateServiceMutation();
   const [updateService, { isLoading: isUpdating }] = useUpdateServiceMutation();
   
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
-    defaultValues: service || {
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
+    defaultValues: {
       name: '',
       description: '',
       price: '',
@@ -18,18 +19,37 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
     }
   });
 
+  useEffect(() => {
+    if (service) {
+      setValue('name', service.name);
+      setValue('description', service.description);
+      setValue('category', service.category);
+      setValue('price', service.price);
+      setValue('durationMinutes', service.durationMinutes);
+      setValue('isActive', service.isActive);
+    } else {
+      reset();
+    }
+  }, [service, setValue, reset]);
+
   const onSubmit = async (data) => {
     try {
-      const serviceData = {
-        ...data,
-        price: Number(data.price),
-        durationMinutes: Number(data.durationMinutes)
-      };
+      const formData = new FormData();
+      formData.append('name', data.name);
+      formData.append('description', data.description);
+      formData.append('category', data.category || 'General');
+      formData.append('price', Number(data.price));
+      formData.append('durationMinutes', Number(data.durationMinutes));
+      formData.append('isActive', data.isActive);
+      
+      if (data.image && data.image[0]) {
+        formData.append('image', data.image[0]);
+      }
       
       if (isEdit) {
-        await updateService({ id: service._id, ...serviceData }).unwrap();
+        await updateService({ id: service._id, formData }).unwrap();
       } else {
-        await createService(serviceData).unwrap();
+        await createService(formData).unwrap();
       }
       reset();
       onClose();
@@ -86,6 +106,14 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
               </div>
               
               <FormInput
+                label="Category"
+                placeholder="e.g., Wellness, Fitness"
+                error={errors.category?.message}
+                required
+                {...register('category', { required: 'Category is required' })}
+              />
+              
+              <FormInput
                 label="Price ($)"
                 type="number"
                 placeholder="50"
@@ -108,6 +136,27 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
                   min: { value: 1, message: 'Duration must be at least 1 minute' }
                 })}
               />
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Service Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50 text-gray-900 transition-all"
+                  {...register('image')}
+                />
+                {service?.image?.url && (
+                  <div className="mt-2">
+                    <img
+                      src={service.image.url}
+                      alt="Current service image"
+                      className="w-20 h-20 object-cover rounded-lg border"
+                    />
+                  </div>
+                )}
+              </div>
               
               <div className="flex items-center">
                 <input

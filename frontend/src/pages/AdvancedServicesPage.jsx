@@ -157,27 +157,40 @@ const AdvancedServicesPage = () => {
             filteredServices.map(service => (
               <div 
                 key={service._id} 
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md"
+                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden cursor-pointer transition-all hover:shadow-md"
                 onClick={() => window.location.href = `/services/${service._id}`}
               >
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {service.name}
-                    </h3>
-                    <p className="text-gray-600 mb-3">{service.description}</p>
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
-                      <span>⏱️ {service.durationMinutes} min</span>
-                      <span>🏷️ {service.category}</span>
-                      <span>⭐ 4.8 (24 reviews)</span>
+                <div className="flex">
+                  {service.image?.url && (
+                    <div className="w-48 h-32 flex-shrink-0">
+                      <img
+                        src={service.image.url}
+                        alt={service.name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-gray-900">
-                      ${service.price}
-                    </div>
-                    <div className="text-sm text-gray-500 mt-1">
-                      Click to view details
+                  )}
+                  <div className="flex-1 p-6">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                          {service.name}
+                        </h3>
+                        <p className="text-gray-600 mb-3">{service.description}</p>
+                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                          <span>⏱️ {service.durationMinutes} min</span>
+                          <span>🏷️ {service.category}</span>
+                          <span>⭐ 4.8 (24 reviews)</span>
+                        </div>
+                      </div>
+                      <div className="text-right ml-4">
+                        <div className="text-2xl font-bold text-gray-900">
+                          ${service.price}
+                        </div>
+                        <div className="text-sm text-gray-500 mt-1">
+                          Click to view details
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -39,10 +39,11 @@ export const userUpdateSchema = userCreateSchema.omit({ password: true }).partia
 export const serviceCreateSchema = z.object({
   name: z.string().min(2).max(100),
   description: z.string().min(10),
-  price: z.number().positive(),
-  durationMinutes: z.number().positive(),
+  category: z.string().min(2).max(50).optional(),
+  price: z.coerce.number().positive(),
+  durationMinutes: z.coerce.number().positive(),
   imageUrl: z.string().url().optional(),
-  isActive: z.boolean().optional()
+  isActive: z.coerce.boolean().optional()
 });
 
 export const serviceUpdateSchema = serviceCreateSchema.partial();

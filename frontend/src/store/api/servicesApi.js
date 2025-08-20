@@ -27,10 +27,10 @@ export const servicesApi = baseApi.injectEndpoints({
       invalidatesTags: ['Service'],
     }),
     updateService: builder.mutation({
-      query: ({ id, ...serviceData }) => ({
+      query: ({ id, formData }) => ({
         url: `/services/${id}`,
         method: 'PUT',
-        body: serviceData,
+        body: formData,
       }),
       invalidatesTags: (result, error, { id }) => [{ type: 'Service', id }, 'Service'],
     }),

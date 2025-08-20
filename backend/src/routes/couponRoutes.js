@@ -3,7 +3,8 @@ import {
   validateCoupon, 
   applyCoupon, 
   getCoupons, 
-  createCoupon 
+  createCoupon,
+  deleteCoupon 
 } from '../controllers/couponController.js';
 import { authGuard, requireRole } from '../middleware/authMiddleware.js';
 
@@ -13,5 +14,6 @@ router.post('/validate', validateCoupon);
 router.post('/apply', authGuard, applyCoupon);
 router.get('/', authGuard, requireRole('admin'), getCoupons);
 router.post('/', authGuard, requireRole('admin'), createCoupon);
+router.delete('/:id', authGuard, requireRole('admin'), deleteCoupon);
 
 export default router;

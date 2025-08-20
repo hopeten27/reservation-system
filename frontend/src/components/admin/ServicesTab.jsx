@@ -62,30 +62,39 @@ const ServicesTab = () => {
               {services.map((service) => (
                 <li key={service._id} className="px-6 py-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                          {service.name}
-                        </h3>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg font-semibold text-gray-900 dark:text-white">
-                            ${service.price}
-                          </span>
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            service.isActive 
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                          }`}>
-                            {service.isActive ? 'Active' : 'Inactive'}
-                          </span>
+                    <div className="flex items-center space-x-4 flex-1">
+                      {service.image?.url && (
+                        <img
+                          src={service.image.url}
+                          alt={service.name}
+                          className="w-16 h-16 object-cover rounded-lg"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                            {service.name}
+                          </h3>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                              ${service.price}
+                            </span>
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                              service.isActive 
+                                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                            }`}>
+                              {service.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
                         </div>
+                        <p className="text-gray-600 dark:text-gray-400 mt-1">
+                          {service.description}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          Duration: {service.durationMinutes} minutes
+                        </p>
                       </div>
-                      <p className="text-gray-600 dark:text-gray-400 mt-1">
-                        {service.description}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Duration: {service.durationMinutes} minutes
-                      </p>
                     </div>
                     <div className="flex items-center space-x-2 ml-4">
                       <button 

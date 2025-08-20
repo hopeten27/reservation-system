@@ -144,3 +144,28 @@ export const createCoupon = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Delete coupon (Admin)
+// @route   DELETE /api/v1/coupons/:id
+// @access  Private (Admin)
+export const deleteCoupon = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const coupon = await Coupon.findByIdAndDelete(id);
+
+    if (!coupon) {
+      return res.status(404).json({
+        success: false,
+        error: { message: 'Coupon not found', code: 'COUPON_NOT_FOUND' }
+      });
+    }
+
+    res.json({
+      success: true,
+      data: { message: 'Coupon deleted successfully' }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
