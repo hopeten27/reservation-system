@@ -1,6 +1,11 @@
-import ServiceList from '../components/ServiceList';
+import { useGetServicesQuery } from '../store/api/servicesApi';
+import ServiceCard from '../components/ServiceCard';
+import Loader from '../components/shared/Loader';
 
 const HomePage = () => {
+  const { data, isLoading } = useGetServicesQuery({ limit: 3 });
+  const services = data?.data?.services || [];
+
   return (
     <div className="space-y-12">
       {/* Hero Section */}
@@ -15,12 +20,31 @@ const HomePage = () => {
         </p>
       </section>
 
-      {/* Services Section */}
+      {/* Featured Services Section */}
       <section>
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-          Available Services
+          Featured Services
         </h2>
-        <ServiceList />
+        {isLoading ? (
+          <Loader className="py-8" />
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {services.map((service) => (
+                <ServiceCard key={service._id} service={service} />
+              ))}
+            </div>
+            <div className="text-center mt-8">
+              <a
+                href="/advanced-services"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors inline-flex items-center space-x-2"
+              >
+                <span>View All Services</span>
+                <span>→</span>
+              </a>
+            </div>
+          </>
+        )}
       </section>
 
       {/* Features Section */}

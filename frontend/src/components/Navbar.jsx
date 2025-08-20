@@ -44,7 +44,7 @@ const Navbar = () => {
                 to="/advanced-services"
                 className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-md text-sm font-medium"
               >
-                Advanced Services
+                Services
               </Link>
               
               {isAuthenticated ? (

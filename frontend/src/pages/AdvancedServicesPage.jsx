@@ -118,7 +118,7 @@ const AdvancedServicesPage = () => {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Advanced Services</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Services</h1>
         <div className="flex space-x-2">
           <button
             onClick={() => setViewMode('grid')}
@@ -148,88 +148,42 @@ const AdvancedServicesPage = () => {
           onDateChange={setSelectedDate}
         />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Services List */}
-          <div className="lg:col-span-2 space-y-4">
-            {filteredServices.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No services match your filters</p>
-              </div>
-            ) : (
-              filteredServices.map(service => (
-                <div 
-                  key={service._id} 
-                  className={`bg-white rounded-xl shadow-sm border p-6 cursor-pointer transition-all ${
-                    selectedService?._id === service._id ? 'border-blue-300 shadow-md' : 'border-gray-200 hover:shadow-md'
-                  }`}
-                  onClick={() => setSelectedService(service)}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        {service.name}
-                      </h3>
-                      <p className="text-gray-600 mb-3">{service.description}</p>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <span>⏱️ {service.durationMinutes} min</span>
-                        <span>🏷️ {service.category}</span>
-                        <span>⭐ 4.8 (24 reviews)</span>
-                      </div>
+        <div className="space-y-4">
+          {filteredServices.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No services match your filters</p>
+            </div>
+          ) : (
+            filteredServices.map(service => (
+              <div 
+                key={service._id} 
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 cursor-pointer transition-all hover:shadow-md"
+                onClick={() => window.location.href = `/services/${service._id}`}
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      {service.name}
+                    </h3>
+                    <p className="text-gray-600 mb-3">{service.description}</p>
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <span>⏱️ {service.durationMinutes} min</span>
+                      <span>🏷️ {service.category}</span>
+                      <span>⭐ 4.8 (24 reviews)</span>
                     </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-900">
-                        ${appliedDiscount && selectedService?._id === service._id 
-                          ? (service.price - (service.price * appliedDiscount.percentage / 100)).toFixed(2)
-                          : service.price
-                        }
-                      </div>
-                      {appliedDiscount && selectedService?._id === service._id && (
-                        <div className="text-sm text-gray-500 line-through">
-                          ${service.price}
-                        </div>
-                      )}
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-gray-900">
+                      ${service.price}
+                    </div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      Click to view details
                     </div>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-
-          {/* Service Details Sidebar */}
-          <div className="space-y-6">
-            {selectedService ? (
-              <>
-                <DiscountSection
-                  onApplyDiscount={handleApplyDiscount}
-                  currentDiscount={appliedDiscount}
-                  originalPrice={selectedService.price}
-                />
-
-                <RecurringBooking
-                  serviceId={selectedService._id}
-                  onCreateRecurring={handleCreateRecurring}
-                  availableSlots={slots.filter(s => s.service === selectedService._id)}
-                />
-
-                <WaitlistSection
-                  serviceId={selectedService._id}
-                  onJoinWaitlist={handleJoinWaitlist}
-                  isOnWaitlist={false}
-                  waitlistPosition={null}
-                />
-
-                <ReviewsSection
-                  serviceId={selectedService._id}
-                  reviews={[]} // Mock empty reviews
-                  onAddReview={handleAddReview}
-                />
-              </>
-            ) : (
-              <div className="bg-gray-50 rounded-xl p-8 text-center">
-                <p className="text-gray-500">Select a service to see details and advanced options</p>
               </div>
-            )}
-          </div>
+            ))
+          )}
         </div>
       )}
     </div>

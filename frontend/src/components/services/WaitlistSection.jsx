@@ -1,24 +1,38 @@
 import { useState } from 'react';
+import { useJoinWaitlistMutation, useGetWaitlistStatusQuery } from '../../store/api/waitlistApi';
 
-const WaitlistSection = ({ serviceId, onJoinWaitlist, isOnWaitlist, waitlistPosition }) => {
-  const [isJoining, setIsJoining] = useState(false);
+const WaitlistSection = ({ serviceId, availableSlots = [] }) => {
+  const [joinWaitlist, { isLoading: isJoining }] = useJoinWaitlistMutation();
+  const { data: waitlistData } = useGetWaitlistStatusQuery(serviceId);
+  
+  const isOnWaitlist = waitlistData?.data?.isOnWaitlist || false;
+  const waitlistPosition = waitlistData?.data?.position;
+  
+  // Check if service has available slots
+  const hasAvailableSlots = availableSlots.some(slot => 
+    slot.status === 'open' && slot.bookedCount < slot.capacity
+  );
+  
+  // Don't show waitlist if there are available slots
+  if (hasAvailableSlots) {
+    return null;
+  }
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
   const handleJoinWaitlist = async (e) => {
     e.preventDefault();
-    setIsJoining(true);
     
     try {
-      await onJoinWaitlist({
+      await joinWaitlist({
         serviceId,
         email,
         phone
-      });
+      }).unwrap();
+      setEmail('');
+      setPhone('');
     } catch (error) {
-      // Error handled by parent
-    } finally {
-      setIsJoining(false);
+      // Error handled by toast middleware
     }
   };
 
@@ -56,7 +70,7 @@ const WaitlistSection = ({ serviceId, onJoinWaitlist, isOnWaitlist, waitlistPosi
           📋
         </div>
         <div>
-          <h3 className="font-semibold text-orange-800">Service Fully Booked</h3>
+          <h3 className="font-semibold text-orange-800">All Slots Fully Booked</h3>
           <p className="text-sm text-orange-600">
             Join our waitlist to be notified when spots become available
           </p>

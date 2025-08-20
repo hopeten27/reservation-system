@@ -1,23 +1,35 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useGetServiceQuery } from '../store/api/servicesApi';
 import { useGetSlotsByServiceQuery } from '../store/api/slotsApi';
 import Loader from '../components/shared/Loader';
 import ErrorState from '../components/shared/ErrorState';
+import DiscountSection from '../components/services/DiscountSection';
+import RecurringBooking from '../components/services/RecurringBooking';
+import WaitlistSection from '../components/services/WaitlistSection';
+import ReviewsSection from '../components/services/ReviewsSection';
 
 const ServiceDetailsPage = () => {
   const { id } = useParams();
+  const [appliedDiscount, setAppliedDiscount] = useState(null);
   const { data: serviceData, isLoading, error } = useGetServiceQuery(id);
   const { data: slotsData } = useGetSlotsByServiceQuery(id);
   
   const service = serviceData?.data?.service;
   const slots = slotsData?.data?.slots || [];
+  
+  const handleDiscountApplied = (discount) => {
+    setAppliedDiscount(discount);
+  };
 
   if (isLoading) return <Loader className="py-12" />;
   if (error) return <ErrorState message="Service not found" />;
   if (!service) return <ErrorState message="Service not found" />;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
       {/* Service Header */}
       <div className="bg-white rounded-lg shadow-sm p-8">
         <div className="flex items-start justify-between mb-6">
@@ -26,7 +38,15 @@ const ServiceDetailsPage = () => {
             <p className="text-gray-600 text-lg">{service.description}</p>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-bold text-primary-600">${service.price}</div>
+            <div className="text-3xl font-bold text-primary-600">
+              ${appliedDiscount 
+                ? appliedDiscount.finalAmount.toFixed(2)
+                : service.price
+              }
+              {appliedDiscount && (
+                <span className="text-lg text-gray-500 line-through ml-2">${service.price}</span>
+              )}
+            </div>
             <div className="text-gray-500">{service.durationMinutes} minutes</div>
           </div>
         </div>
@@ -90,6 +110,32 @@ const ServiceDetailsPage = () => {
             ))}
           </div>
         )}
+      </div>
+
+          {/* Reviews Section */}
+          <ReviewsSection
+            serviceId={service._id}
+          />
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          <DiscountSection
+            serviceId={service._id}
+            originalPrice={service.price}
+            onDiscountApplied={handleDiscountApplied}
+          />
+
+          <RecurringBooking
+            serviceId={service._id}
+            availableSlots={slots}
+          />
+
+          <WaitlistSection
+            serviceId={service._id}
+            availableSlots={slots}
+          />
+        </div>
       </div>
     </div>
   );

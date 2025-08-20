@@ -15,6 +15,11 @@ import bookingRoutes from './routes/bookingRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import invoiceRoutes from './routes/invoiceRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import recurringRoutes from './routes/recurringRoutes.js';
+import waitlistRoutes from './routes/waitlistRoutes.js';
+import couponRoutes from './routes/couponRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 // Load environment variables
 dotenv.config();
@@ -72,6 +77,11 @@ app.use('/api/v1/bookings', bookingRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/invoices', invoiceRoutes);
+app.use('/api/v1/reviews', reviewRoutes);
+app.use('/api/v1/recurring', recurringRoutes);
+app.use('/api/v1/waitlist', waitlistRoutes);
+app.use('/api/v1/coupons', couponRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 // Protected test routes
 app.get('/api/v1/protected', authGuard, (req, res) => {

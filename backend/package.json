@@ -12,6 +12,8 @@
     "create-sample-data": "node scripts/createSampleData.js",
     "generate-test-data": "node scripts/generateTestData.js",
     "test-invoice": "node scripts/testInvoice.js",
+    "add-sample-reviews": "node scripts/addSampleReviews.js",
+    "create-sample-coupons": "node scripts/createSampleCoupons.js",
     "test": "node --experimental-vm-modules node_modules/.bin/jest"
   },
   "dependencies": {

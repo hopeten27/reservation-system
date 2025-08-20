@@ -1,6 +1,13 @@
 import { useState } from 'react';
+import { useGetServiceReviewsQuery, useCreateReviewMutation } from '../../store/api/reviewApi';
+import { useSelector } from 'react-redux';
+import Loader from '../shared/Loader';
 
-const ReviewsSection = ({ serviceId, reviews = [], onAddReview }) => {
+const ReviewsSection = ({ serviceId }) => {
+  const { user } = useSelector((state) => state.auth);
+  const { data, isLoading } = useGetServiceReviewsQuery(serviceId);
+  const [createReview] = useCreateReviewMutation();
+  const reviews = data?.data?.reviews || [];
   const [showForm, setShowForm] = useState(false);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
@@ -11,16 +18,16 @@ const ReviewsSection = ({ serviceId, reviews = [], onAddReview }) => {
     setIsSubmitting(true);
     
     try {
-      await onAddReview({
+      await createReview({
         serviceId,
         rating,
         comment
-      });
+      }).unwrap();
       setComment('');
       setRating(5);
       setShowForm(false);
     } catch (error) {
-      // Error handled by parent
+      // Error handled by toast middleware
     } finally {
       setIsSubmitting(false);
     }
@@ -51,6 +58,8 @@ const ReviewsSection = ({ serviceId, reviews = [], onAddReview }) => {
     ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
     : 0;
 
+  if (isLoading) return <Loader />;
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       <div className="flex justify-between items-center mb-6">
@@ -65,12 +74,14 @@ const ReviewsSection = ({ serviceId, reviews = [], onAddReview }) => {
             </div>
           )}
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-        >
-          Write Review
-        </button>
+        {user && (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            Write Review
+          </button>
+        )}
       </div>
 
       {showForm && (

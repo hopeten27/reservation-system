@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
+  banned: {
+    type: Boolean,
+    default: false
+  },
   avatarUrl: {
     type: String,
     match: [/^https?:\/\/.+/, 'Please enter a valid URL']

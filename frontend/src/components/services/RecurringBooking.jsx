@@ -1,6 +1,11 @@
 import { useState } from 'react';
+import { useCreateRecurringBookingMutation } from '../../store/api/recurringApi';
+import { loadStripe } from '@stripe/stripe-js';
 
-const RecurringBooking = ({ serviceId, onCreateRecurring, availableSlots }) => {
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+
+const RecurringBooking = ({ serviceId, availableSlots }) => {
+  const [createRecurringBooking, { isLoading: isCreating }] = useCreateRecurringBookingMutation();
   const [isRecurring, setIsRecurring] = useState(false);
   const [frequency, setFrequency] = useState('weekly');
   const [duration, setDuration] = useState('4');
@@ -11,16 +16,30 @@ const RecurringBooking = ({ serviceId, onCreateRecurring, availableSlots }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    const recurringData = {
-      serviceId,
-      frequency,
-      duration: parseInt(duration),
-      dayOfWeek: selectedDay,
-      time: selectedTime,
-      startDate
-    };
-    
-    await onCreateRecurring(recurringData);
+    try {
+      const recurringData = {
+        serviceId,
+        frequency,
+        totalSessions: parseInt(duration),
+        dayOfWeek: parseInt(selectedDay),
+        time: selectedTime,
+        startDate
+      };
+      
+      const result = await createRecurringBooking(recurringData).unwrap();
+      
+      // Redirect to payment
+      const stripe = await stripePromise;
+      const { error } = await stripe.redirectToCheckout({
+        sessionId: result.data.paymentIntent.clientSecret
+      });
+      
+      if (error) {
+        console.error('Payment error:', error);
+      }
+    } catch (error) {
+      console.error('Recurring booking error:', error);
+    }
   };
 
   const getDayName = (dayNumber) => {
@@ -181,9 +200,10 @@ const RecurringBooking = ({ serviceId, onCreateRecurring, availableSlots }) => {
 
         <button
           type="submit"
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+          disabled={isCreating}
+          className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-gray-400 text-white py-3 px-4 rounded-lg font-medium transition-colors"
         >
-          Create Recurring Booking
+          {isCreating ? 'Creating...' : 'Create Recurring Booking'}
         </button>
       </form>
     </div>

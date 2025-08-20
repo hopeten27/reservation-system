@@ -1,6 +1,9 @@
 import { useState } from 'react';
+import { useValidateCouponMutation } from '../../store/api/couponApi';
 
-const DiscountSection = ({ onApplyDiscount, currentDiscount, originalPrice }) => {
+const DiscountSection = ({ serviceId, originalPrice, onDiscountApplied }) => {
+  const [validateCoupon] = useValidateCouponMutation();
+  const [currentDiscount, setCurrentDiscount] = useState(null);
   const [couponCode, setCouponCode] = useState('');
   const [isApplying, setIsApplying] = useState(false);
   const [error, setError] = useState('');
@@ -12,23 +15,32 @@ const DiscountSection = ({ onApplyDiscount, currentDiscount, originalPrice }) =>
     setError('');
     
     try {
-      await onApplyDiscount(couponCode);
+      const result = await validateCoupon({
+        code: couponCode,
+        serviceId,
+        amount: originalPrice
+      }).unwrap();
+      
+      const discount = result.data.coupon;
+      setCurrentDiscount(discount);
+      onDiscountApplied && onDiscountApplied(discount);
       setCouponCode('');
     } catch (err) {
-      setError(err.message || 'Invalid coupon code');
+      setError(err.data?.error?.message || 'Invalid coupon code');
     } finally {
       setIsApplying(false);
     }
   };
 
   const handleRemoveDiscount = () => {
-    onApplyDiscount(null);
+    setCurrentDiscount(null);
+    onDiscountApplied && onDiscountApplied(null);
     setCouponCode('');
     setError('');
   };
 
   const discountedPrice = currentDiscount 
-    ? originalPrice - (originalPrice * currentDiscount.percentage / 100)
+    ? currentDiscount.finalAmount
     : originalPrice;
 
   return (
