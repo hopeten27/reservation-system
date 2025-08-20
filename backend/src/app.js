@@ -7,8 +7,10 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
 import errorHandler from './middleware/errorMiddleware.js';
+import { authGuard, requireRole } from './middleware/authMiddleware.js';
 import authRoutes from './routes/authRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
+import slotRoutes from './routes/slotRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 
 // Load environment variables
@@ -62,7 +64,29 @@ app.get('/api/v1/health', (req, res) => {
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/services', serviceRoutes);
+app.use('/api/v1/slots', slotRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
+
+// Protected test routes
+app.get('/api/v1/protected', authGuard, (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      message: 'Access granted to protected route',
+      user: req.user.name
+    }
+  });
+});
+
+app.get('/api/v1/admin-only', authGuard, requireRole('admin'), (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      message: 'Access granted to admin-only route',
+      user: req.user.name
+    }
+  });
+});
 
 // 404 handler
 app.all('*', (req, res) => {

@@ -18,7 +18,13 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: [6, 'Password must be at least 6 characters'],
+    minlength: [8, 'Password must be at least 8 characters'],
+    validate: {
+      validator: function(password) {
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password);
+      },
+      message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+    },
     select: false
   },
   role: {
@@ -34,8 +40,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for email
-userSchema.index({ email: 1 });
+// Email index is created automatically by unique: true
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {

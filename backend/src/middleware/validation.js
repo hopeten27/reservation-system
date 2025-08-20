@@ -22,12 +22,19 @@ export const validate = (schema) => {
 export const userCreateSchema = z.object({
   name: z.string().min(2).max(50),
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number'),
   role: z.enum(['user', 'admin']).optional(),
   avatarUrl: z.string().url().optional()
 });
 
-export const userUpdateSchema = userCreateSchema.partial();
+export const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1, 'Password is required')
+});
+
+export const userUpdateSchema = userCreateSchema.omit({ password: true }).partial();
 
 export const serviceCreateSchema = z.object({
   name: z.string().min(2).max(100),

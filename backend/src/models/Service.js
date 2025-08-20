@@ -36,8 +36,8 @@ const serviceSchema = new mongoose.Schema({
 });
 
 // Indexes
-serviceSchema.index({ name: 1 });
 serviceSchema.index({ isActive: 1 });
 serviceSchema.index({ price: 1 });
+serviceSchema.index({ name: 'text', description: 'text' });
 
 export default mongoose.model('Service', serviceSchema);

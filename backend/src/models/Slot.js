@@ -11,8 +11,7 @@ const slotSchema = new mongoose.Schema({
     required: [true, 'Start date is required']
   },
   end: {
-    type: Date,
-    required: [true, 'End date is required']
+    type: Date
   },
   capacity: {
     type: Number,

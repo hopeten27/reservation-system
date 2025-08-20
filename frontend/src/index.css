@@ -1,1 +1,22 @@
 @import "tailwindcss";
+
+/* Custom theme tokens for modern Tailwind */
+@theme {
+  --color-primary-50: #eff6ff;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Dark mode configuration */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+.dark {
+  color-scheme: dark;
+}
