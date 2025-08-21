@@ -1,9 +1,13 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useJoinWaitlistMutation, useGetWaitlistStatusQuery } from '../../store/api/waitlistApi';
 
 const WaitlistSection = ({ serviceId, availableSlots = [] }) => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [joinWaitlist, { isLoading: isJoining }] = useJoinWaitlistMutation();
-  const { data: waitlistData } = useGetWaitlistStatusQuery(serviceId);
+  const { data: waitlistData } = useGetWaitlistStatusQuery(serviceId, { skip: !isAuthenticated });
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   
   const isOnWaitlist = waitlistData?.data?.isOnWaitlist || false;
   const waitlistPosition = waitlistData?.data?.position;
@@ -17,8 +21,6 @@ const WaitlistSection = ({ serviceId, availableSlots = [] }) => {
   if (hasAvailableSlots) {
     return null;
   }
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
 
   const handleJoinWaitlist = async (e) => {
     e.preventDefault();

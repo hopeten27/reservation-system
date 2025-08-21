@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useGetSlotQuery } from '../store/api/slotsApi';
 import { useCreatePaymentIntentMutation } from '../store/api/paymentApi';
@@ -11,10 +11,10 @@ import PaymentForm from '../components/payment/PaymentForm';
 
 const BookingPage = () => {
   const { slotId } = useParams();
-  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [step, setStep] = useState('details');
   const [paymentData, setPaymentData] = useState(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
   
   const { data: slotData, isLoading, error } = useGetSlotQuery(slotId);
   const [createPaymentIntent, { isLoading: isCreating }] = useCreatePaymentIntentMutation();
@@ -44,7 +44,7 @@ const BookingPage = () => {
   };
   
   const handlePaymentSuccess = () => {
-    navigate('/bookings');
+    setPaymentSuccess(true);
   };
   
   const handlePaymentError = (error) => {
@@ -138,14 +138,35 @@ const BookingPage = () => {
                 </div>
               </div>
               
-              <StripeProvider clientSecret={paymentData.clientSecret}>
-                <PaymentForm
-                  clientSecret={paymentData.clientSecret}
-                  amount={paymentData.amount}
-                  onSuccess={handlePaymentSuccess}
-                  onError={handlePaymentError}
-                />
-              </StripeProvider>
+              {paymentSuccess ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Payment Successful!</h3>
+                  <p className="text-gray-600 mb-6">Your booking has been confirmed.</p>
+                  <Link
+                    to="/bookings"
+                    className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                  >
+                    View My Bookings
+                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Link>
+                </div>
+              ) : (
+                <StripeProvider clientSecret={paymentData.clientSecret}>
+                  <PaymentForm
+                    clientSecret={paymentData.clientSecret}
+                    amount={paymentData.amount}
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
+                  />
+                </StripeProvider>
+              )}
               
               <button
                 onClick={() => setStep('details')}

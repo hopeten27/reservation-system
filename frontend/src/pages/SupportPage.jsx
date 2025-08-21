@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const SupportPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
@@ -93,9 +95,9 @@ const SupportPage = () => {
             Can't find what you're looking for? Our support team is here to help.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/contact" className="bg-white text-blue-600 px-8 py-3 rounded-xl hover:bg-blue-50 transition-all transform hover:scale-105 font-medium">
+            <Link to="/contact" className="bg-white text-blue-600 px-8 py-3 rounded-xl hover:bg-blue-50 transition-all transform hover:scale-105 font-medium">
               Contact Support
-            </a>
+            </Link>
             <a href="mailto:support@reserveease.com" className="border-2 border-white text-white px-8 py-3 rounded-xl hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105 font-medium">
               Email Us
             </a>

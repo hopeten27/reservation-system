@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const PrivacyPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
@@ -117,9 +119,9 @@ const PrivacyPage = () => {
           <p className="text-blue-100 mb-6">
             If you have any questions about this Privacy Policy, please contact us at privacy@reserveease.com
           </p>
-          <a href="/contact" className="bg-white text-blue-600 px-8 py-3 rounded-xl hover:bg-blue-50 transition-all transform hover:scale-105 font-medium inline-block">
+          <Link to="/contact" className="bg-white text-blue-600 px-8 py-3 rounded-xl hover:bg-blue-50 transition-all transform hover:scale-105 font-medium inline-block">
             Contact Us
-          </a>
+          </Link>
         </div>
       </div>
     </div>

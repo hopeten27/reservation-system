@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useGetBookingsQuery, useCancelBookingMutation } from '../store/api/bookingsApi';
 import Loader from '../components/shared/Loader';
 import ErrorState from '../components/shared/ErrorState';
@@ -92,15 +92,15 @@ const BookingsPage = () => {
               <p className="mt-2 text-gray-600">Manage and track your service appointments</p>
             </div>
             <div className="mt-4 sm:mt-0">
-              <a
-                href="/advanced-services"
+              <Link
+                to="/advanced-services"
                 className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 Book New Service
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -114,15 +114,15 @@ const BookingsPage = () => {
             </svg>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No bookings yet</h3>
             <p className="text-gray-600 mb-6">You haven't made any bookings. Browse our services to get started!</p>
-            <a
-              href="/advanced-services"
+            <Link
+              to="/advanced-services"
               className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
             >
               Browse Services
               <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-            </a>
+            </Link>
           </div>
         ) : (
           <>

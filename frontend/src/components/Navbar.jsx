@@ -17,6 +17,7 @@ const Navbar = () => {
       dispatch(clearAuth());
     } catch (error) {
       console.error('Logout failed:', error);
+      dispatch(clearAuth());
     }
   };
 
@@ -73,7 +74,8 @@ const Navbar = () => {
                     </button>
                     {showDropdown && (
                       <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                        <button 
+                        <Link
+                          to="/"
                           onClick={() => {
                             handleLogout();
                             setShowDropdown(false);
@@ -81,7 +83,7 @@ const Navbar = () => {
                           className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
                           Logout
-                        </button>
+                        </Link>
                       </div>
                     )}
                   </div>

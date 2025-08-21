@@ -4,6 +4,10 @@ const customBaseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL,
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers.set('authorization', `Bearer ${token}`);
+    }
     return headers;
   },
 });
@@ -21,7 +25,15 @@ const baseQueryWithFormData = async (args, api, extraOptions) => {
     };
   }
   
-  return customBaseQuery(args, api, extraOptions);
+  const result = await customBaseQuery(args, api, extraOptions);
+  
+  // Handle 401 errors by clearing auth state
+  if (result.error && result.error.status === 401) {
+    localStorage.removeItem('token');
+    api.dispatch({ type: 'auth/clearAuth' });
+  }
+  
+  return result;
 };
 
 export const baseApi = createApi({

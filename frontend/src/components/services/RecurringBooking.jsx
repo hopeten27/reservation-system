@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useCreateRecurringBookingMutation } from '../../store/api/recurringApi';
 import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const RecurringBooking = ({ serviceId, availableSlots }) => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [createRecurringBooking, { isLoading: isCreating }] = useCreateRecurringBookingMutation();
   const [isRecurring, setIsRecurring] = useState(false);
   const [frequency, setFrequency] = useState('weekly');
@@ -58,6 +60,11 @@ const RecurringBooking = ({ serviceId, availableSlots }) => {
     
     return times;
   };
+
+  // Don't show recurring booking for non-authenticated users
+  if (!isAuthenticated) {
+    return null;
+  }
 
   if (!isRecurring) {
     return (

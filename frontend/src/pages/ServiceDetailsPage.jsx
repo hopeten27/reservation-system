@@ -62,7 +62,7 @@ const ServiceDetailsPage = () => {
               <div className="h-8 bg-gray-200 rounded mb-8 w-48"></div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="border-2 rounded-lg p-6">
+                  <div key={i} className="bg-gray-100 rounded-lg p-6">
                     <div className="h-6 bg-gray-200 rounded mb-2 w-32"></div>
                     <div className="h-8 bg-gray-200 rounded mb-4 w-20"></div>
                     <div className="h-10 bg-gray-200 rounded w-full"></div>

@@ -19,6 +19,7 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
       state.isLoading = false;
+      localStorage.removeItem('token');
     },
   },
   extraReducers: (builder) => {
@@ -30,6 +31,9 @@ const authSlice = createSlice({
           if (payload.success && payload.data.user) {
             state.user = payload.data.user;
             state.isAuthenticated = true;
+            if (payload.data.token) {
+              localStorage.setItem('token', payload.data.token);
+            }
           }
         }
       )
@@ -40,6 +44,9 @@ const authSlice = createSlice({
           if (payload.success && payload.data.user) {
             state.user = payload.data.user;
             state.isAuthenticated = true;
+            if (payload.data.token) {
+              localStorage.setItem('token', payload.data.token);
+            }
           }
         }
       )
@@ -74,6 +81,7 @@ const authSlice = createSlice({
         (state) => {
           state.user = null;
           state.isAuthenticated = false;
+          localStorage.removeItem('token');
         }
       );
   },
