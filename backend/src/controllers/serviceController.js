@@ -62,14 +62,15 @@ export const createService = async (req, res, next) => {
       isActive: req.body.isActive === 'true'
     };
     
-    if (req.file) {
-      // Ensure Cloudinary is configured
-      cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
-      });
-      
+    // Ensure Cloudinary is configured
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+    
+    // Handle main image
+    if (req.files?.image?.[0]) {
       const uploadResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
           {
@@ -84,13 +85,42 @@ export const createService = async (req, res, next) => {
             else resolve(result);
           }
         );
-        stream.end(req.file.buffer);
+        stream.end(req.files.image[0].buffer);
       });
       
       serviceData.image = {
         url: uploadResult.secure_url,
         publicId: uploadResult.public_id
       };
+    }
+    
+    // Handle additional images
+    if (req.files?.additionalImages) {
+      const additionalImages = [];
+      for (const file of req.files.additionalImages) {
+        const uploadResult = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: 'booking-services',
+              transformation: [
+                { width: 800, height: 600, crop: 'fill' },
+                { quality: 'auto' }
+              ]
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          stream.end(file.buffer);
+        });
+        
+        additionalImages.push({
+          url: uploadResult.secure_url,
+          publicId: uploadResult.public_id
+        });
+      }
+      serviceData.additionalImages = additionalImages;
     }
     
     const service = await Service.create(serviceData);
@@ -127,14 +157,15 @@ export const updateService = async (req, res, next) => {
       isActive: req.body.isActive === 'true'
     };
     
-    if (req.file) {
-      // Ensure Cloudinary is configured
-      cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
-      });
-      
+    // Ensure Cloudinary is configured
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+    
+    // Handle main image update
+    if (req.files?.image?.[0]) {
       if (service.image?.publicId) {
         await cloudinary.uploader.destroy(service.image.publicId);
       }
@@ -153,13 +184,51 @@ export const updateService = async (req, res, next) => {
             else resolve(result);
           }
         );
-        stream.end(req.file.buffer);
+        stream.end(req.files.image[0].buffer);
       });
       
       updateData.image = {
         url: uploadResult.secure_url,
         publicId: uploadResult.public_id
       };
+    }
+    
+    // Handle additional images update
+    if (req.files?.additionalImages) {
+      // Delete existing additional images
+      if (service.additionalImages?.length > 0) {
+        for (const img of service.additionalImages) {
+          if (img.publicId) {
+            await cloudinary.uploader.destroy(img.publicId);
+          }
+        }
+      }
+      
+      const additionalImages = [];
+      for (const file of req.files.additionalImages) {
+        const uploadResult = await new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: 'booking-services',
+              transformation: [
+                { width: 800, height: 600, crop: 'fill' },
+                { quality: 'auto' }
+              ]
+            },
+            (error, result) => {
+              if (error) reject(error);
+              else resolve(result);
+            }
+          );
+          stream.end(file.buffer);
+        });
+        
+        additionalImages.push({
+          url: uploadResult.secure_url,
+          publicId: uploadResult.public_id
+        });
+      }
+      updateData.additionalImages = additionalImages;
     }
     
     const updatedService = await Service.findByIdAndUpdate(
@@ -193,8 +262,18 @@ export const deleteService = async (req, res, next) => {
       });
     }
     
+    // Delete main image
     if (service.image?.publicId) {
       await cloudinary.uploader.destroy(service.image.publicId);
+    }
+    
+    // Delete additional images
+    if (service.additionalImages?.length > 0) {
+      for (const img of service.additionalImages) {
+        if (img.publicId) {
+          await cloudinary.uploader.destroy(img.publicId);
+        }
+      }
     }
     
     await Service.findByIdAndDelete(req.params.id);

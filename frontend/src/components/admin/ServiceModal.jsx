@@ -49,6 +49,12 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
         formData.append('image', data.image[0]);
       }
       
+      if (data.additionalImages && data.additionalImages.length > 0) {
+        for (let i = 0; i < Math.min(data.additionalImages.length, 5); i++) {
+          formData.append('additionalImages', data.additionalImages[i]);
+        }
+      }
+      
       if (isEdit) {
         await updateService.mutateAsync({ id: service._id, formData });
       } else {
@@ -142,7 +148,7 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Service Image
+                  Main Service Image
                 </label>
                 <input
                   type="file"
@@ -157,6 +163,32 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
                       alt="Current service image"
                       className="w-20 h-20 object-cover rounded-lg border"
                     />
+                  </div>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Additional Images (Optional)
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/50 text-gray-900 transition-all"
+                  {...register('additionalImages')}
+                />
+                <p className="text-xs text-gray-500 mt-1">Select up to 5 additional images</p>
+                {service?.additionalImages && service.additionalImages.length > 0 && (
+                  <div className="mt-2 grid grid-cols-4 gap-2">
+                    {service.additionalImages.map((img, index) => (
+                      <img
+                        key={index}
+                        src={img.url}
+                        alt={`Additional image ${index + 1}`}
+                        className="w-16 h-16 object-cover rounded-lg border"
+                      />
+                    ))}
                   </div>
                 )}
               </div>

@@ -13,6 +13,12 @@ const serviceSchema = new mongoose.Schema({
     required: [true, 'Description is required'],
     minlength: [10, 'Description must be at least 10 characters']
   },
+  category: {
+    type: String,
+    required: [true, 'Category is required'],
+    trim: true,
+    maxlength: [50, 'Category cannot exceed 50 characters']
+  },
   price: {
     type: Number,
     required: [true, 'Price is required'],
@@ -40,7 +46,17 @@ const serviceSchema = new mongoose.Schema({
       type: String,
       default: ''
     }
-  }
+  },
+  additionalImages: [{
+    url: {
+      type: String,
+      default: ''
+    },
+    publicId: {
+      type: String,
+      default: ''
+    }
+  }]
 }, {
   timestamps: true
 });
