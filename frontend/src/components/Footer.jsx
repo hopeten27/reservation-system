@@ -1,4 +1,5 @@
 import Logo from './Logo';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -18,14 +19,14 @@ const Footer = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                <Link to="/about" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
                   About
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                <Link to="/contact" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -36,14 +37,14 @@ const Footer = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                <Link to="/advanced-services" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
                   Booking
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                <Link to="/support" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
                   Support
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -54,14 +55,14 @@ const Footer = () => {
             </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                <Link to="/privacy" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
                   Privacy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
+                <Link to="/terms" className="text-gray-600 hover:text-gray-900 text-sm transition-colors">
                   Terms
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

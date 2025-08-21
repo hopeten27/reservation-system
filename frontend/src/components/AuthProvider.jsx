@@ -2,12 +2,14 @@ import { useEffect } from 'react';
 import { useGetMeQuery } from '../store/api/authApi';
 
 const AuthProvider = ({ children }) => {
+  const token = localStorage.getItem('token');
   const { isLoading } = useGetMeQuery(undefined, {
-    // Automatically fetch user data on app load
+    // Only fetch user data if token exists
+    skip: !token,
     refetchOnMountOrArgChange: true,
   });
 
-  if (isLoading) {
+  if (isLoading && token) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">

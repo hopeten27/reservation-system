@@ -9,6 +9,11 @@ import BookingPage from '../pages/BookingPage';
 import BookingsPage from '../pages/BookingsPage';
 import AdminDashboard from '../pages/AdminDashboard';
 import AdvancedServicesPage from '../pages/AdvancedServicesPage';
+import AboutPage from '../pages/AboutPage';
+import ContactPage from '../pages/ContactPage';
+import SupportPage from '../pages/SupportPage';
+import PrivacyPage from '../pages/PrivacyPage';
+import TermsPage from '../pages/TermsPage';
 
 const AppRoutes = () => {
   return (
@@ -35,6 +40,11 @@ const AppRoutes = () => {
               <AdminDashboard />
             </ProtectedRoute>
           } />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="support" element={<SupportPage />} />
+          <Route path="privacy" element={<PrivacyPage />} />
+          <Route path="terms" element={<TermsPage />} />
         </Route>
       </Routes>
     </Router>
