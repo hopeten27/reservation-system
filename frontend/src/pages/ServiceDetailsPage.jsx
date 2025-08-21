@@ -128,18 +128,46 @@ const ServiceDetailsPage = () => {
                 </div>
               </div>
               
-              {/* Image Section */}
-              {service.image?.url && (
-                <div className="lg:w-96 lg:flex-shrink-0">
-                  <div className="h-64 lg:h-full relative overflow-hidden lg:rounded-r-2xl">
-                    <img
-                      src={service.image.url}
-                      alt={service.name}
-                      className="w-full h-full object-cover"
-                    />
-                    {/* Decorative overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  </div>
+              {/* Image Section - Only show if service has images */}
+              {(service.image?.url || (service.additionalImages && service.additionalImages.length > 0)) && (
+                <div className="lg:w-[500px] lg:flex-shrink-0">
+                <div className="space-y-4">
+                  {/* Main Image */}
+                  {service.image?.url && (
+                    <div className="h-64 relative overflow-hidden rounded-2xl">
+                      <img
+                        src={service.image.url}
+                        alt={service.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                    </div>
+                  )}
+                  
+                  {/* Additional Images Gallery */}
+                  {service.additionalImages && service.additionalImages.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2">
+                      {service.additionalImages.slice(0, 6).map((image, index) => (
+                        <div key={index} className="group relative overflow-hidden rounded-lg aspect-square">
+                          <img
+                            src={image.url}
+                            alt={`${service.name} - ${index + 1}`}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
+                          {index === 5 && service.additionalImages.length > 6 && (
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                              <span className="text-white font-semibold text-sm">
+                                +{service.additionalImages.length - 5}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                </div>
                 </div>
               )}
             </div>
@@ -250,42 +278,7 @@ const ServiceDetailsPage = () => {
               )}
             </div>
 
-            {/* Additional Images Gallery */}
-            <div className="bg-white rounded-xl shadow-sm p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Service Gallery</h2>
-              
-              {/* Debug info */}
-              <div className="mb-4 p-4 bg-gray-100 rounded-lg">
-                <p className="text-sm text-gray-600">
-                  Additional Images: {service.additionalImages ? service.additionalImages.length : 0}
-                </p>
-                {service.additionalImages && (
-                  <pre className="text-xs text-gray-500 mt-2">
-                    {JSON.stringify(service.additionalImages, null, 2)}
-                  </pre>
-                )}
-              </div>
-              
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {service.additionalImages?.map((image, index) => (
-                  <div key={index} className="overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <img
-                      src={image.url}
-                      alt={`${service.name} - Image ${index + 1}`}
-                      className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        console.log('Image failed to load:', image.url);
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )) || (
-                  <div className="col-span-full text-center py-8 text-gray-500">
-                    <p>No additional images available for this service.</p>
-                  </div>
-                )}
-              </div>
-            </div>
+
 
             {/* Reviews Section */}
             <ReviewsSection

@@ -170,32 +170,118 @@ const AnalyticsDashboard = () => {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
-          <span className="text-sm text-gray-500">Live updates</span>
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Recent Activity</h3>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-gray-600">Live updates</span>
+            </div>
+          </div>
         </div>
-        <div className="space-y-3">
+        
+        <div className="p-6">
           {(analytics.recentActivity || []).length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <div className="text-4xl mb-2">📊</div>
-              <p>No recent activity to display</p>
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">No Recent Activity</h4>
+              <p className="text-gray-500">Activity will appear here as your business grows</p>
             </div>
           ) : (
-            (analytics.recentActivity || []).map((activity, index) => (
-              <div key={index} className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-lg">
-                  {activity.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">{activity.title}</p>
-                  <p className="text-xs text-gray-500">{activity.time}</p>
-                </div>
-                <div className="flex-shrink-0 text-sm font-medium text-gray-900">
-                  {activity.value}
-                </div>
-              </div>
-            ))
+            <div className="space-y-4">
+              {(analytics.recentActivity || []).map((activity, index) => {
+                const getActivityColor = (type) => {
+                  switch (type) {
+                    case 'booking': return 'from-blue-500 to-blue-600';
+                    case 'payment': return 'from-green-500 to-green-600';
+                    case 'user': return 'from-purple-500 to-purple-600';
+                    case 'service': return 'from-orange-500 to-orange-600';
+                    default: return 'from-gray-500 to-gray-600';
+                  }
+                };
+                
+                const getActivityIcon = (type) => {
+                  switch (type) {
+                    case 'booking': return '📅';
+                    case 'payment': return '💰';
+                    case 'user': return '👤';
+                    case 'service': return '🎯';
+                    default: return '📊';
+                  }
+                };
+                
+                return (
+                  <div key={index} className="group relative">
+                    <div className="flex items-center space-x-4 p-4 bg-gray-50 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 rounded-xl transition-all duration-300 hover:shadow-md">
+                      <div className={`flex-shrink-0 w-12 h-12 bg-gradient-to-r ${getActivityColor(activity.type)} rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                        <span className="text-lg">{activity.icon || getActivityIcon(activity.type)}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                            {activity.title}
+                          </p>
+                          {activity.isNew && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                              New
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <p className="text-xs text-gray-500 flex items-center">
+                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {activity.time}
+                          </p>
+                          {activity.location && (
+                            <p className="text-xs text-gray-500 flex items-center">
+                              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              {activity.location}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0 text-right">
+                        <div className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                          {activity.value}
+                        </div>
+                        {activity.change && (
+                          <div className={`text-xs font-medium flex items-center justify-end mt-1 ${
+                            activity.change > 0 ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            <svg className={`w-3 h-3 mr-1 ${activity.change > 0 ? '' : 'rotate-180'}`} fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                            </svg>
+                            {Math.abs(activity.change)}%
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Timeline connector */}
+                    {index < (analytics.recentActivity || []).length - 1 && (
+                      <div className="absolute left-10 top-16 w-0.5 h-4 bg-gradient-to-b from-gray-200 to-transparent"></div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
