@@ -52,7 +52,7 @@ const BulkSlotCreation = () => {
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border p-6">
+    <div className="bg-white rounded-lg shadow-sm p-6">
       <h3 className="text-lg font-semibold mb-4">Bulk Create Time Slots</h3>
       
       <form onSubmit={handleSubmit} className="space-y-4">

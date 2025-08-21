@@ -49,7 +49,7 @@ const DataExport = () => {
       <h2 className="text-2xl font-bold text-gray-900">Data Export</h2>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm border p-6">
+      <div className="bg-white rounded-lg shadow-sm p-6">
         <h3 className="text-lg font-semibold mb-4">Export Filters</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
@@ -108,7 +108,7 @@ const DataExport = () => {
       {/* Export Options */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {exportOptions.map(option => (
-          <div key={option.type} className="bg-white rounded-lg shadow-sm border p-6">
+          <div key={option.type} className="bg-white rounded-lg shadow-sm p-6">
             <div className="flex items-center space-x-3 mb-4">
               <div className="text-2xl">{option.icon}</div>
               <div>

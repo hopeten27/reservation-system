@@ -7,10 +7,23 @@ const DashboardStats = () => {
   
   if (error) {
     console.error('Dashboard stats error:', error);
-    // Show error state with zeros instead of hiding
   }
 
-  if (isLoading) return <Loader className="py-4" />;
+  if (isLoading) return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 animate-pulse">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 bg-gray-200 rounded-xl"></div>
+            <div className="flex-1">
+              <div className="h-4 bg-gray-200 rounded mb-2"></div>
+              <div className="h-6 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   const statCards = [
     {
@@ -42,7 +55,7 @@ const DashboardStats = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       {statCards.map((stat, index) => (
-        <div key={index} className="bg-white rounded-lg shadow-sm p-6">
+        <div key={index} className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center">
             <div className={`${stat.color} rounded-lg p-3 text-white text-2xl mr-4`}>
               {stat.icon}
