@@ -20,3 +20,16 @@
 .dark {
   color-scheme: dark;
 }
+
+/* Force dark mode styles */
+@variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(.dark, .dark *) {
+      @mixin;
+    }
+  }
+  
+  &:where(.dark, .dark *) {
+    @mixin;
+  }
+}

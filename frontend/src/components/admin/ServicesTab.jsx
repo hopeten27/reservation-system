@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGetServicesQuery, useDeleteServiceMutation } from '../../store/api/servicesApi';
+import { useServices, useDeleteService } from '../../hooks/useServices';
 import Loader from '../shared/Loader';
 import ErrorState from '../shared/ErrorState';
 import EmptyState from '../shared/EmptyState';
@@ -12,15 +12,16 @@ const ServicesTab = () => {
   const [showModal, setShowModal] = useState(false);
   const [editService, setEditService] = useState(null);
   
-  const { data, isLoading, error } = useGetServicesQuery({ page, limit: 10 });
-  const [deleteService, { isLoading: isDeleting }] = useDeleteServiceMutation();
+  const { data, isLoading, error } = useServices({ page, limit: 10 });
+  const deleteService = useDeleteService();
   
   const services = data?.data?.services || [];
   const pagination = data?.data?.pagination;
+  const isDeleting = deleteService.isPending;
   
   const handleDelete = async () => {
     try {
-      await deleteService(deleteId).unwrap();
+      await deleteService.mutateAsync(deleteId);
       setDeleteId(null);
     } catch (error) {
       // Error handled by toast middleware

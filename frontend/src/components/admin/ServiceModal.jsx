@@ -1,13 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
-import { useCreateServiceMutation, useUpdateServiceMutation } from '../../store/api/servicesApi';
+import { useCreateService, useUpdateService } from '../../hooks/useServices';
 import FormInput from '../shared/FormInput';
 import Loader from '../shared/Loader';
 
 const ServiceModal = ({ isOpen, onClose, service = null }) => {
   const isEdit = !!service;
-  const [createService, { isLoading: isCreating }] = useCreateServiceMutation();
-  const [updateService, { isLoading: isUpdating }] = useUpdateServiceMutation();
+  const createService = useCreateService();
+  const updateService = useUpdateService();
+  
+  const isCreating = createService.isPending;
+  const isUpdating = updateService.isPending;
   
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
     defaultValues: {
@@ -47,9 +50,9 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
       }
       
       if (isEdit) {
-        await updateService({ id: service._id, formData }).unwrap();
+        await updateService.mutateAsync({ id: service._id, formData });
       } else {
-        await createService(formData).unwrap();
+        await createService.mutateAsync(formData);
       }
       reset();
       onClose();

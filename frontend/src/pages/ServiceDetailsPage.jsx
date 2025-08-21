@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useGetServiceQuery } from '../store/api/servicesApi';
+import { useService } from '../hooks/useServices';
 import { useGetSlotsByServiceQuery } from '../store/api/slotsApi';
 import Loader from '../components/shared/Loader';
 import ErrorState from '../components/shared/ErrorState';
@@ -12,7 +12,7 @@ import ReviewsSection from '../components/services/ReviewsSection';
 const ServiceDetailsPage = () => {
   const { id } = useParams();
   const [appliedDiscount, setAppliedDiscount] = useState(null);
-  const { data: serviceData, isLoading, error } = useGetServiceQuery(id);
+  const { data: serviceData, isLoading, error } = useService(id);
   const { data: slotsData } = useGetSlotsByServiceQuery(id);
   
   const service = serviceData?.data?.service;

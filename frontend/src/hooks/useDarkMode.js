@@ -1,39 +1,30 @@
 import { useState, useEffect } from 'react';
 
 export const useDarkMode = () => {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const saved = localStorage.getItem('darkMode');
-    return saved ? JSON.parse(saved) : false;
-  });
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    // Check if user has a preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    localStorage.setItem('darkMode', JSON.stringify(isDark));
-    const root = document.documentElement;
-    
-    if (isDark) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-  }, [isDark]);
-  
-  // Initialize on mount
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const saved = localStorage.getItem('darkMode');
-    if (saved) {
-      const darkMode = JSON.parse(saved);
-      if (darkMode) {
-        document.documentElement.classList.add('dark');
-      }
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
     }
   }, []);
 
-  const toggleDarkMode = () => setIsDark(!isDark);
+  const toggleDarkMode = () => {
+    if (isDark) {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      setIsDark(false);
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      setIsDark(true);
+    }
+  };
 
   return { isDark, toggleDarkMode };
 };
