@@ -52,7 +52,48 @@ const BookingPage = () => {
     setStep('details');
   };
   
-  if (isLoading) return <Loader className="py-12" />;
+  if (isLoading) return (
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <div className="flex items-center justify-center animate-pulse">
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+              <div className="ml-2 h-4 bg-gray-200 rounded w-24"></div>
+            </div>
+            <div className="flex-1 mx-4 h-0.5 bg-gray-300"></div>
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+              <div className="ml-2 h-4 bg-gray-200 rounded w-16"></div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden animate-pulse">
+          <div className="bg-gray-200 px-8 py-6">
+            <div className="h-8 bg-gray-300 rounded mb-2 w-64"></div>
+            <div className="h-4 bg-gray-300 rounded w-96"></div>
+          </div>
+          <div className="p-8">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+              <div className="xl:col-span-2 space-y-8">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="bg-gray-50 rounded-xl p-6">
+                    <div className="h-6 bg-gray-200 rounded mb-4 w-48"></div>
+                    <div className="h-20 bg-gray-200 rounded"></div>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-6">
+                <div className="h-32 bg-gray-200 rounded-xl"></div>
+                <div className="h-48 bg-gray-200 rounded-xl"></div>
+                <div className="h-12 bg-gray-200 rounded-xl"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
   if (error) return <ErrorState message="Failed to load slot details" />;
   if (!slot) return <ErrorState message="Slot not found" />;
 

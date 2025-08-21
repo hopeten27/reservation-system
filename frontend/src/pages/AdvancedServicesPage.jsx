@@ -48,7 +48,60 @@ const AdvancedServicesPage = () => {
 
   const categories = [...new Set(services.map(s => s.category))];
 
-  if (isLoading) return <Loader className="py-12" />;
+  if (isLoading) return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <div className="h-10 bg-gray-200 rounded mx-auto mb-4 w-64 animate-pulse"></div>
+            <div className="h-6 bg-gray-200 rounded mx-auto w-96 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="lg:w-80 flex-shrink-0">
+            <div className="bg-white rounded-lg shadow-sm p-6 animate-pulse">
+              <div className="h-6 bg-gray-200 rounded mb-6 w-32"></div>
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="mb-6">
+                  <div className="h-4 bg-gray-200 rounded mb-2 w-20"></div>
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex-1">
+            <div className="flex justify-between items-center mb-6">
+              <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+              <div className="flex space-x-2">
+                <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+                <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {[...Array(9)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
+                  <div className="h-48 bg-gray-200"></div>
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="h-6 bg-gray-200 rounded w-32"></div>
+                      <div className="h-6 bg-gray-200 rounded w-16"></div>
+                    </div>
+                    <div className="h-4 bg-gray-200 rounded mb-4"></div>
+                    <div className="flex justify-between">
+                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                      <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
   if (error) return <ErrorState message="Failed to load services" />;
 
   return (

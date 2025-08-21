@@ -33,7 +33,56 @@ const ServiceDetailsPage = () => {
     setAppliedDiscount(discount);
   };
 
-  if (isLoading) return <Loader className="py-12" />;
+  if (isLoading) return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white rounded-2xl shadow-sm overflow-hidden animate-pulse">
+            <div className="flex flex-col lg:flex-row">
+              <div className="flex-1 p-8">
+                <div className="h-8 bg-gray-200 rounded mb-3 w-64"></div>
+                <div className="h-6 bg-gray-200 rounded mb-6 w-full"></div>
+                <div className="flex gap-4 mb-6">
+                  <div className="h-6 bg-gray-200 rounded w-20"></div>
+                  <div className="h-6 bg-gray-200 rounded w-24"></div>
+                </div>
+                <div className="h-20 bg-gray-200 rounded w-32"></div>
+              </div>
+              <div className="lg:w-96 lg:flex-shrink-0">
+                <div className="h-64 lg:h-full bg-gray-200"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="bg-white rounded-xl shadow-sm p-8 animate-pulse">
+              <div className="h-8 bg-gray-200 rounded mb-8 w-48"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="border-2 rounded-lg p-6">
+                    <div className="h-6 bg-gray-200 rounded mb-2 w-32"></div>
+                    <div className="h-8 bg-gray-200 rounded mb-4 w-20"></div>
+                    <div className="h-10 bg-gray-200 rounded w-full"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="space-y-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 rounded mb-4 w-32"></div>
+                <div className="h-20 bg-gray-200 rounded"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
   if (error) return <ErrorState message="Service not found" />;
   if (!service) return <ErrorState message="Service not found" />;
 
@@ -202,22 +251,41 @@ const ServiceDetailsPage = () => {
             </div>
 
             {/* Additional Images Gallery */}
-            {service.additionalImages && service.additionalImages.length > 0 && (
-              <div className="bg-white rounded-xl shadow-sm p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Gallery</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {service.additionalImages.map((image, index) => (
-                    <div key={index} className="aspect-square overflow-hidden rounded-lg">
-                      <img
-                        src={image.url}
-                        alt={`${service.name} - Image ${index + 1}`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
-                      />
-                    </div>
-                  ))}
-                </div>
+            <div className="bg-white rounded-xl shadow-sm p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Service Gallery</h2>
+              
+              {/* Debug info */}
+              <div className="mb-4 p-4 bg-gray-100 rounded-lg">
+                <p className="text-sm text-gray-600">
+                  Additional Images: {service.additionalImages ? service.additionalImages.length : 0}
+                </p>
+                {service.additionalImages && (
+                  <pre className="text-xs text-gray-500 mt-2">
+                    {JSON.stringify(service.additionalImages, null, 2)}
+                  </pre>
+                )}
               </div>
-            )}
+              
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {service.additionalImages?.map((image, index) => (
+                  <div key={index} className="overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                    <img
+                      src={image.url}
+                      alt={`${service.name} - Image ${index + 1}`}
+                      className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        console.log('Image failed to load:', image.url);
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )) || (
+                  <div className="col-span-full text-center py-8 text-gray-500">
+                    <p>No additional images available for this service.</p>
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Reviews Section */}
             <ReviewsSection
