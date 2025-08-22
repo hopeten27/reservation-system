@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useGetSlotQuery } from '../store/api/slotsApi';
 import { useCreatePaymentIntentMutation } from '../store/api/paymentApi';
+import { useCreateBookingMutation } from '../store/api/bookingsApi';
 import { useForm } from 'react-hook-form';
 import Loader from '../components/shared/Loader';
 import ErrorState from '../components/shared/ErrorState';
@@ -18,6 +19,7 @@ const BookingPage = () => {
   
   const { data: slotData, isLoading, error } = useGetSlotQuery(slotId);
   const [createPaymentIntent, { isLoading: isCreating }] = useCreatePaymentIntentMutation();
+  const [createBooking] = useCreateBookingMutation();
   
   const { register, handleSubmit, formState: { errors } } = useForm();
   
@@ -43,12 +45,41 @@ const BookingPage = () => {
     }
   };
   
-  const handlePaymentSuccess = () => {
-    setPaymentSuccess(true);
+  const handlePaymentSuccess = async (paymentIntent) => {
+    console.log('Payment success handler called:', paymentIntent);
+    try {
+      const result = await fetch(`${import.meta.env.VITE_API_URL}/bookings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          service: service._id,
+          slot: slotId,
+          amount: paymentData.amount,
+          paymentIntentId: paymentIntent.id,
+          notes: paymentData.notes || ''
+        })
+      });
+      
+      const data = await result.json();
+      console.log('Booking created successfully:', data);
+      
+      if (data.success) {
+        setPaymentSuccess(true);
+      } else {
+        alert('Payment succeeded but booking creation failed: ' + (data.error?.message || 'Unknown error'));
+      }
+    } catch (error) {
+      console.error('Booking creation failed:', error);
+      alert('Payment succeeded but booking creation failed. Please contact support.');
+    }
   };
   
   const handlePaymentError = (error) => {
     console.error('Payment error:', error);
+    alert('Payment failed: ' + error);
     setStep('details');
   };
   
@@ -158,14 +189,53 @@ const BookingPage = () => {
                   </Link>
                 </div>
               ) : (
-                <StripeProvider clientSecret={paymentData.clientSecret}>
-                  <PaymentForm
-                    clientSecret={paymentData.clientSecret}
-                    amount={paymentData.amount}
-                    onSuccess={handlePaymentSuccess}
-                    onError={handlePaymentError}
-                  />
-                </StripeProvider>
+                <div className="space-y-6">
+                  <button
+                    onClick={async () => {
+                      try {
+                        const result = await fetch(`${import.meta.env.VITE_API_URL}/bookings`, {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                          },
+                          body: JSON.stringify({
+                            service: service._id,
+                            slot: slotId,
+                            amount: paymentData.amount,
+                            paymentIntentId: 'pi_test_' + Date.now(),
+                            notes: paymentData.notes || 'Test booking'
+                          })
+                        });
+                        const data = await result.json();
+                        console.log('Test booking result:', data);
+                        if (data.success) {
+                          setPaymentSuccess(true);
+                        } else {
+                          alert('Booking failed: ' + (data.error?.message || 'Unknown error'));
+                        }
+                      } catch (error) {
+                        console.error('Test booking error:', error);
+                        alert('Booking error: ' + error.message);
+                      }
+                    }}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                  >
+                    Test Create Booking (Skip Payment)
+                  </button>
+                  
+                  <StripeProvider clientSecret={paymentData.clientSecret}>
+                    <PaymentForm
+                      clientSecret={paymentData.clientSecret}
+                      amount={paymentData.amount}
+                      serviceId={service._id}
+                      slotId={slotId}
+                      notes={paymentData.notes}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                    />
+                  </StripeProvider>
+                </div>
               )}
               
               <button

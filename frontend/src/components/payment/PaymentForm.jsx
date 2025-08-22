@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import Loader from '../shared/Loader';
 
-const PaymentForm = ({ clientSecret, onSuccess, onError, amount }) => {
+const PaymentForm = ({ clientSecret, onSuccess, onError, amount, serviceId, slotId, notes }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -16,29 +16,56 @@ const PaymentForm = ({ clientSecret, onSuccess, onError, amount }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log('Payment form submitted');
 
     if (!stripe || !elements) {
+      console.error('Stripe not loaded:', { stripe: !!stripe, elements: !!elements });
+      onError('Payment system not ready. Please refresh and try again.');
       return;
     }
 
+    console.log('Starting payment confirmation...');
     setIsProcessing(true);
 
     try {
+      console.log('Calling stripe.confirmPayment...');
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/bookings`,
+          return_url: `${window.location.origin}/payment-success?service=${serviceId}&slot=${slotId}&notes=${encodeURIComponent(notes || '')}&amount=${amount}`,
         },
         redirect: 'if_required'
       });
+      console.log('stripe.confirmPayment completed');
 
+      console.log('Stripe confirmPayment result:', { error, paymentIntent });
+      
       if (error) {
-        onError(error.message);
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        onSuccess(paymentIntent);
+        console.error('Stripe payment error:', error);
+        if (error.type === 'card_error') {
+          onError(`Card error: ${error.message}`);
+        } else {
+          onError(`Payment error: ${error.message}`);
+        }
+      } else if (paymentIntent) {
+        console.log('Payment intent result:', paymentIntent);
+        if (paymentIntent.status === 'succeeded') {
+          console.log('Payment succeeded, calling success handler');
+          onSuccess(paymentIntent);
+        } else if (paymentIntent.status === 'requires_action') {
+          console.log('Payment requires additional action');
+          onError('Payment requires additional authentication');
+        } else {
+          console.log('Payment status:', paymentIntent.status);
+          onError(`Payment status: ${paymentIntent.status}`);
+        }
+      } else {
+        console.error('No payment intent returned');
+        onError('No payment result received');
       }
     } catch (err) {
-      onError('Payment failed. Please try again.');
+      console.error('Payment confirmation error:', err);
+      onError(`Payment failed: ${err.message}`);
     } finally {
       setIsProcessing(false);
     }

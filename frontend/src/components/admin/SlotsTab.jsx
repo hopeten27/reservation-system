@@ -3,7 +3,6 @@ import { useGetSlotsQuery, useDeleteSlotMutation } from '../../store/api/slotsAp
 import Loader from '../shared/Loader';
 import ErrorState from '../shared/ErrorState';
 import EmptyState from '../shared/EmptyState';
-import ConfirmDialog from '../shared/ConfirmDialog';
 import SlotModal from './SlotModal';
 
 const SlotsTab = () => {
@@ -261,15 +260,56 @@ const SlotsTab = () => {
         </>
       )}
 
-      <ConfirmDialog
-        isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
-        onConfirm={handleDelete}
-        title="Delete Slot"
-        message="Are you sure you want to delete this slot? This action cannot be undone."
-        confirmText="Delete"
-        type="danger"
-      />
+      {/* Modern Confirmation Dialog */}
+      {deleteId && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/60" onClick={() => setDeleteId(null)}></div>
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full animate-in fade-in-0 zoom-in-95 duration-200">
+            <div className="p-6">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-2xl">
+                  ⏰
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Delete Time Slot
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {slots.find(s => s._id === deleteId)?.service?.name || 'Time Slot'}
+                  </p>
+                </div>
+              </div>
+              
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete this time slot? This action cannot be undone and will cancel any existing bookings.
+              </p>
+              
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setDeleteId(null)}
+                  className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isDeleting ? (
+                    <div className="flex items-center justify-center">
+                      <Loader size="sm" className="mr-2" />
+                      Deleting...
+                    </div>
+                  ) : (
+                    'Yes, Delete Slot'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       <SlotModal
         isOpen={showModal}

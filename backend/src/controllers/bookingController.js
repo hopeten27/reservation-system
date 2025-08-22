@@ -146,7 +146,9 @@ export const createBooking = async (req, res, next) => {
       user: userId,
       service: serviceId,
       slot: slotId,
-      amount: slot.service.price,
+      amount: req.body.amount || slot.service.price,
+      paymentIntentId: req.body.paymentIntentId || 'test_' + Date.now(),
+      status: req.body.paymentIntentId ? 'confirmed' : 'pending',
       notes
     });
 

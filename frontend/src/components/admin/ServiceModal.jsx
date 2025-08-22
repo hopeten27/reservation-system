@@ -12,7 +12,7 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
   const isCreating = createService.isPending;
   const isUpdating = updateService.isPending;
   
-  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset, setValue, setError, clearErrors } = useForm({
     defaultValues: {
       name: '',
       description: '',
@@ -21,6 +21,24 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
       isActive: true
     }
   });
+
+  const validateFileSize = (files, fieldName, maxSizeMB = 5) => {
+    if (!files || files.length === 0) return true;
+    
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileSizeMB = file.size / (1024 * 1024);
+      if (fileSizeMB > maxSizeMB) {
+        setError(fieldName, {
+          type: 'manual',
+          message: `File "${file.name}" is too large. Maximum size is ${maxSizeMB}MB.`
+        });
+        return false;
+      }
+    }
+    clearErrors(fieldName);
+    return true;
+  };
 
   useEffect(() => {
     if (service) {
@@ -215,8 +233,13 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
                     type="file"
                     accept="image/*"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                    {...register('image')}
+                    {...register('image', {
+                      onChange: (e) => validateFileSize(e.target.files, 'image')
+                    })}
                   />
+                  {errors.image && (
+                    <p className="mt-1 text-sm text-red-600">{errors.image.message}</p>
+                  )}
                   {service?.image?.url && (
                     <div className="mt-3">
                       <p className="text-sm text-gray-600 mb-2">Current image:</p>
@@ -238,8 +261,13 @@ const ServiceModal = ({ isOpen, onClose, service = null }) => {
                     accept="image/*"
                     multiple
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                    {...register('additionalImages')}
+                    {...register('additionalImages', {
+                      onChange: (e) => validateFileSize(e.target.files, 'additionalImages')
+                    })}
                   />
+                  {errors.additionalImages && (
+                    <p className="mt-1 text-sm text-red-600">{errors.additionalImages.message}</p>
+                  )}
                   <p className="text-xs text-gray-500 mt-1">Select up to 5 additional images to showcase your service</p>
                   {service?.additionalImages && service.additionalImages.length > 0 && (
                     <div className="mt-3">

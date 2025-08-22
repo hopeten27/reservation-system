@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import Layout from '../components/Layout';
 import ProtectedRoute from '../components/ProtectedRoute';
 import HomePage from '../pages/HomePage';
@@ -9,11 +11,14 @@ import BookingPage from '../pages/BookingPage';
 import BookingsPage from '../pages/BookingsPage';
 import AdminDashboard from '../pages/AdminDashboard';
 import AdvancedServicesPage from '../pages/AdvancedServicesPage';
+import PaymentSuccessPage from '../pages/PaymentSuccessPage';
 import AboutPage from '../pages/AboutPage';
 import ContactPage from '../pages/ContactPage';
 import SupportPage from '../pages/SupportPage';
 import PrivacyPage from '../pages/PrivacyPage';
 import TermsPage from '../pages/TermsPage';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const AppRoutes = () => {
   return (
@@ -33,6 +38,13 @@ const AppRoutes = () => {
           <Route path="bookings" element={
             <ProtectedRoute>
               <BookingsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="payment-success" element={
+            <ProtectedRoute>
+              <Elements stripe={stripePromise}>
+                <PaymentSuccessPage />
+              </Elements>
             </ProtectedRoute>
           } />
           <Route path="dashboard" element={

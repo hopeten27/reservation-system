@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useServices, useDeleteService } from '../../hooks/useServices';
 import Loader from '../shared/Loader';
 import ErrorState from '../shared/ErrorState';
@@ -85,7 +86,7 @@ const ServicesTab = () => {
           {/* Services Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service) => (
-              <div key={service._id} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group">
+              <Link key={service._id} to={`/services/${service._id}`} className="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group block cursor-pointer">
                 {/* Service Image */}
                 <div className="relative h-48 bg-gray-100">
                   {service.image?.url ? (
@@ -148,7 +149,9 @@ const ServicesTab = () => {
                   {/* Actions */}
                   <div className="flex space-x-2">
                     <button 
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         setEditService(service);
                         setShowModal(true);
                       }}
@@ -157,14 +160,18 @@ const ServicesTab = () => {
                       Edit
                     </button>
                     <button 
-                      onClick={() => setDeleteService(service)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setDeleteService(service);
+                      }}
                       className="flex-1 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
                     >
                       Delete
                     </button>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 

@@ -17,6 +17,12 @@ const BookingsPage = () => {
   
   const bookings = data?.data?.bookings || [];
   
+  // Debug logging
+  console.log('Bookings API Response:', data);
+  console.log('Bookings Array:', bookings);
+  console.log('API Error:', error);
+  console.log('Is Loading:', isLoading);
+  
   const filteredBookings = bookings.filter(booking => 
     filterStatus === 'all' || booking.status === filterStatus
   );
@@ -79,7 +85,10 @@ const BookingsPage = () => {
   };
 
   if (isLoading) return <Loader className="py-12" />;
-  if (error) return <ErrorState message="Failed to load bookings" />;
+  if (error) {
+    console.error('Bookings API Error:', error);
+    return <ErrorState message={`Failed to load bookings: ${error?.data?.message || error?.message || 'Unknown error'}`} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
