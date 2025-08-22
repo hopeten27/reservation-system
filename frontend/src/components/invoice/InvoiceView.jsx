@@ -55,14 +55,14 @@ const InvoiceView = ({ bookingId, onClose }) => {
         <div className="grid grid-cols-2 gap-8 mb-8">
           <div>
             <h3 className="font-bold text-blue-600 mb-2">Bill To:</h3>
-            <div>{invoice.customer.name}</div>
-            <div>{invoice.customer.email}</div>
+            <div>{invoice.customer?.name || 'N/A'}</div>
+            <div>{invoice.customer?.email || 'N/A'}</div>
           </div>
           <div>
             <h3 className="font-bold text-blue-600 mb-2">Service Details:</h3>
-            <div><strong>Date:</strong> {invoice.appointment.formattedDate}</div>
-            <div><strong>Time:</strong> {invoice.appointment.formattedTime}</div>
-            <div><strong>Duration:</strong> {invoice.service.duration} minutes</div>
+            <div><strong>Date:</strong> {invoice.appointment?.formattedDate || 'N/A'}</div>
+            <div><strong>Time:</strong> {invoice.appointment?.formattedTime || 'N/A'}</div>
+            <div><strong>Duration:</strong> {invoice.service?.duration || 'N/A'} minutes</div>
           </div>
         </div>
 
@@ -79,11 +79,11 @@ const InvoiceView = ({ bookingId, onClose }) => {
           </thead>
           <tbody>
             <tr>
-              <td className="border border-gray-300 p-3">{invoice.service.name}</td>
-              <td className="border border-gray-300 p-3">{invoice.service.description || 'Professional service'}</td>
+              <td className="border border-gray-300 p-3">{invoice.service?.name || 'N/A'}</td>
+              <td className="border border-gray-300 p-3">{invoice.service?.description || 'Professional service'}</td>
               <td className="border border-gray-300 p-3 text-center">1</td>
-              <td className="border border-gray-300 p-3 text-right">${invoice.booking.amount}</td>
-              <td className="border border-gray-300 p-3 text-right">${invoice.booking.amount}</td>
+              <td className="border border-gray-300 p-3 text-right">${invoice.booking?.amount || 0}</td>
+              <td className="border border-gray-300 p-3 text-right">${invoice.booking?.amount || 0}</td>
             </tr>
           </tbody>
         </table>
@@ -93,7 +93,7 @@ const InvoiceView = ({ bookingId, onClose }) => {
           <div className="w-64">
             <div className="flex justify-between py-2">
               <span>Subtotal:</span>
-              <span>${invoice.booking.amount}</span>
+              <span>${invoice.booking?.amount || 0}</span>
             </div>
             <div className="flex justify-between py-2">
               <span>Tax:</span>
@@ -101,13 +101,13 @@ const InvoiceView = ({ bookingId, onClose }) => {
             </div>
             <div className="flex justify-between py-2 border-t-2 border-blue-600 font-bold text-lg text-blue-600">
               <span>Total:</span>
-              <span>${invoice.booking.amount}</span>
+              <span>${invoice.booking?.amount || 0}</span>
             </div>
           </div>
         </div>
 
         {/* Notes */}
-        {invoice.booking.notes && (
+        {invoice.booking?.notes && (
           <div className="mb-8">
             <h3 className="font-bold text-blue-600 mb-2">Notes:</h3>
             <div>{invoice.booking.notes}</div>
@@ -117,7 +117,7 @@ const InvoiceView = ({ bookingId, onClose }) => {
         {/* Footer */}
         <div className="text-center text-gray-600 text-sm">
           <p>Thank you for your business!</p>
-          <p>Payment ID: {invoice.booking.paymentIntentId}</p>
+          <p>Payment ID: {invoice.booking?.paymentIntentId || 'N/A'}</p>
         </div>
       </div>
     </div>

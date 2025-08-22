@@ -1,4 +1,4 @@
-import { generateInvoicePDF } from '../services/invoiceService.js';
+import { generateInvoiceHTML } from '../services/invoiceService.js';
 import Booking from '../models/Booking.js';
 
 // @desc    Generate invoice PDF
@@ -35,29 +35,13 @@ export const generateInvoice = async (req, res, next) => {
       });
     }
 
-    // Generate PDF
-    const pdfBuffer = await generateInvoicePDF(booking);
-    
-    if (!pdfBuffer || pdfBuffer.length === 0) {
-      return res.status(500).json({
-        success: false,
-        error: {
-          message: 'Failed to generate PDF',
-          code: 'PDF_GENERATION_FAILED'
-        }
-      });
-    }
-    
-    const invoiceNumber = `INV-${booking._id.toString().slice(-8).toUpperCase()}`;
+    // Generate invoice data
+    const invoiceData = generateInvoiceHTML(booking);
 
-    // Set response headers
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="${invoiceNumber}.pdf"`);
-    res.setHeader('Content-Length', pdfBuffer.length);
-    res.setHeader('Cache-Control', 'no-cache');
-
-    // Send PDF
-    res.end(pdfBuffer);
+    res.json({
+      success: true,
+      data: { invoice: invoiceData }
+    });
   } catch (error) {
     next(error);
   }

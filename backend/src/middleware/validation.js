@@ -64,6 +64,6 @@ export const bookingCreateSchema = z.object({
 });
 
 export const bookingUpdateSchema = z.object({
-  status: z.enum(['pending', 'confirmed', 'cancelled', 'refunded']).optional(),
+  status: z.enum(['pending', 'confirmed', 'cancelled', 'refunded', 'completed']).optional(),
   notes: z.string().optional()
 });

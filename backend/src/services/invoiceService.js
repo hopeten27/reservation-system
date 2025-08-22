@@ -1,26 +1,4 @@
-import htmlPdf from 'html-pdf-node';
-
-export const generateInvoicePDF = async (booking) => {
-  const html = generateInvoiceHTML(booking);
-  
-  const options = {
-    format: 'A4',
-    printBackground: true,
-    margin: {
-      top: '20px',
-      right: '20px',
-      bottom: '20px',
-      left: '20px'
-    }
-  };
-
-  const file = { content: html };
-  const pdfBuffer = await htmlPdf.generatePdf(file, options);
-  
-  return pdfBuffer;
-};
-
-const generateInvoiceHTML = (booking) => {
+export const generateInvoiceHTML = (booking) => {
   const invoiceNumber = `INV-${booking._id.toString().slice(-8).toUpperCase()}`;
   const invoiceDate = new Date().toLocaleDateString();
   const serviceDate = new Date(booking.slot.date).toLocaleDateString();

@@ -40,6 +40,24 @@ export const createReview = async (req, res, next) => {
       });
     }
 
+    // Check if user has completed booking for this service
+    const Booking = (await import('../models/Booking.js')).default;
+    const completedBooking = await Booking.findOne({
+      user: req.user._id,
+      service: serviceId,
+      status: 'completed'
+    });
+
+    if (!completedBooking) {
+      return res.status(403).json({
+        success: false,
+        error: {
+          message: 'You can only review services you have completed',
+          code: 'NO_COMPLETED_BOOKING'
+        }
+      });
+    }
+
     // Create review
     const review = await Review.create({
       user: req.user._id,

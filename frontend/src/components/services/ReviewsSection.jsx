@@ -1,13 +1,21 @@
 import { useState } from 'react';
 import { useGetServiceReviewsQuery, useCreateReviewMutation } from '../../store/api/reviewApi';
+import { useGetBookingsQuery } from '../../store/api/bookingsApi';
 import { useSelector } from 'react-redux';
 import Loader from '../shared/Loader';
 
 const ReviewsSection = ({ serviceId }) => {
-  const { user } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { data, isLoading } = useGetServiceReviewsQuery(serviceId);
+  const { data: bookingsData } = useGetBookingsQuery(undefined, { skip: !isAuthenticated });
   const [createReview] = useCreateReviewMutation();
   const reviews = data?.data?.reviews || [];
+  
+  // Check if user has completed bookings for this service
+  const userBookings = bookingsData?.data?.bookings || [];
+  const hasCompletedBooking = userBookings.some(booking => 
+    booking.service?._id === serviceId && booking.status === 'completed'
+  );
   const [showForm, setShowForm] = useState(false);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
@@ -77,7 +85,7 @@ const ReviewsSection = ({ serviceId }) => {
             <p className="text-gray-600">No reviews yet</p>
           )}
         </div>
-        {user && (
+        {user && hasCompletedBooking && (
           <button
             onClick={() => setShowForm(!showForm)}
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
@@ -87,7 +95,7 @@ const ReviewsSection = ({ serviceId }) => {
         )}
       </div>
 
-      {showForm && (
+      {showForm && hasCompletedBooking && (
         <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Write a Review</h3>
           <form onSubmit={handleSubmit}>
