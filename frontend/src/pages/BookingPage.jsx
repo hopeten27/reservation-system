@@ -189,53 +189,17 @@ const BookingPage = () => {
                   </Link>
                 </div>
               ) : (
-                <div className="space-y-6">
-                  <button
-                    onClick={async () => {
-                      try {
-                        const result = await fetch(`${import.meta.env.VITE_API_URL}/bookings`, {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`
-                          },
-                          body: JSON.stringify({
-                            service: service._id,
-                            slot: slotId,
-                            amount: paymentData.amount,
-                            paymentIntentId: 'pi_test_' + Date.now(),
-                            notes: paymentData.notes || 'Test booking'
-                          })
-                        });
-                        const data = await result.json();
-                        console.log('Test booking result:', data);
-                        if (data.success) {
-                          setPaymentSuccess(true);
-                        } else {
-                          alert('Booking failed: ' + (data.error?.message || 'Unknown error'));
-                        }
-                      } catch (error) {
-                        console.error('Test booking error:', error);
-                        alert('Booking error: ' + error.message);
-                      }
-                    }}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
-                  >
-                    Test Create Booking (Skip Payment)
-                  </button>
-                  
-                  <StripeProvider clientSecret={paymentData.clientSecret}>
-                    <PaymentForm
-                      clientSecret={paymentData.clientSecret}
-                      amount={paymentData.amount}
-                      serviceId={service._id}
-                      slotId={slotId}
-                      notes={paymentData.notes}
-                      onSuccess={handlePaymentSuccess}
-                      onError={handlePaymentError}
-                    />
-                  </StripeProvider>
-                </div>
+                <StripeProvider clientSecret={paymentData.clientSecret}>
+                  <PaymentForm
+                    clientSecret={paymentData.clientSecret}
+                    amount={paymentData.amount}
+                    serviceId={service._id}
+                    slotId={slotId}
+                    notes={paymentData.notes}
+                    onSuccess={handlePaymentSuccess}
+                    onError={handlePaymentError}
+                  />
+                </StripeProvider>
               )}
               
               <button

@@ -8,6 +8,8 @@ import dotenv from 'dotenv';
 
 import errorHandler from './middleware/errorMiddleware.js';
 import { authGuard, requireRole } from './middleware/authMiddleware.js';
+import { compressionMiddleware } from './middleware/compression.js';
+import { cacheMiddleware } from './middleware/cache.js';
 import authRoutes from './routes/authRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import slotRoutes from './routes/slotRoutes.js';
@@ -26,12 +28,17 @@ dotenv.config();
 
 const app = express();
 
+// Performance middleware
+app.use(compressionMiddleware);
+
 // Security middleware
 app.use(helmet());
 
 // CORS
 app.use(cors({
-  origin: true,
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://your-frontend.vercel.app'] 
+    : true,
   credentials: true
 }));
 
@@ -69,10 +76,10 @@ app.get('/api/v1/health', (req, res) => {
   });
 });
 
-// Routes
+// Routes with caching for read-only endpoints
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/services', serviceRoutes);
-app.use('/api/v1/slots', slotRoutes);
+app.use('/api/v1/services', cacheMiddleware(3 * 60 * 1000), serviceRoutes);
+app.use('/api/v1/slots', cacheMiddleware(1 * 60 * 1000), slotRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/payments', paymentRoutes);

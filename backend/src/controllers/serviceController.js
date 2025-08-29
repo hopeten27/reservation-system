@@ -9,7 +9,8 @@ export const getServices = async (req, res, next) => {
   try {
     const { query, page, limit } = buildQuery(req.query, Service);
     
-    // Populate minimal refs if needed
+    // Use lean for better performance
+    query.lean();
     const { docs, pagination } = await paginate(query, page, limit);
 
     res.json({
@@ -29,7 +30,7 @@ export const getServices = async (req, res, next) => {
 // @access  Public
 export const getService = async (req, res, next) => {
   try {
-    const service = await Service.findById(req.params.id);
+    const service = await Service.findById(req.params.id).lean();
 
     if (!service) {
       return res.status(404).json({

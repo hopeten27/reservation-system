@@ -110,23 +110,7 @@ const AnalyticsDashboard = () => {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Bookings"
-          value={analytics.totalBookings || 0}
-          change={analytics.bookingsChange}
-          icon="📅"
-          gradient="from-blue-500 to-blue-600"
-          bgGradient="from-blue-50 to-blue-100"
-        />
-        <StatCard
-          title="Revenue"
-          value={`$${analytics.totalRevenue || 0}`}
-          change={analytics.revenueChange}
-          icon="💰"
-          gradient="from-green-500 to-green-600"
-          bgGradient="from-green-50 to-green-100"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StatCard
           title="New Users"
           value={analytics.newUsers || 0}
