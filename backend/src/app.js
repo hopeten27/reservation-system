@@ -36,9 +36,7 @@ app.use(helmet());
 
 // CORS
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend.vercel.app'] 
-    : true,
+  origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : true,
   credentials: true
 }));
 
